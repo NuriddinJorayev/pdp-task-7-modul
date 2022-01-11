@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_myinsta/pages/home_paga.dart';
 import 'package:flutter_myinsta/pages/signin_page.dart';
 import 'package:flutter_myinsta/pages/signup_page.dart';
 import 'package:flutter_myinsta/pages/splash_page.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       routes: {
         SignInPage().id : (context) => SignInPage(),
         SignUpPage().id : (context) => SignUpPage(),
+        Home().id : (context) => Home(),
       },
     );
   }

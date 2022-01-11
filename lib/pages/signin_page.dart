@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_myinsta/pages/home_paga.dart';
 import 'package:flutter_myinsta/pages/signup_page.dart';
 import 'package:flutter_myinsta/widgets/outline_button.dart';
 import 'package:flutter_myinsta/widgets/sign_text.dart';
@@ -46,7 +47,7 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(height: 10.0),
                 MyTextFields(text: "Password", control: e_control,),
                 SizedBox(height: 10.0),
-                MyOutLineButoon(onPressed: (){}, textname: "Sign In")
+                MyOutLineButoon(onPressed:_coll_home_page, textname: "Sign In")
                   ],
                 ),
               ),
@@ -61,5 +62,9 @@ class _SignInPageState extends State<SignInPage> {
   }
   _signTextPress(){
     Navigator.pushNamed(context, SignUpPage().id);
+  }
+
+  _coll_home_page(){
+    Navigator.pushReplacementNamed(context, Home().id);
   }
 }
