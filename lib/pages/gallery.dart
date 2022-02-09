@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_myinsta/functions/main_page_controller.dart';
-import 'package:flutter_myinsta/functions/permissions.dart';
+import 'package:flutter_myinsta/functions/page_opener_push.dart';
 import 'package:flutter_myinsta/models/image_loader.dart';
-import 'package:flutter_myinsta/models/newtest.dart';
 import 'package:flutter_myinsta/pages/new_post_pages/image_effect_page.dart';
+import 'package:flutter_myinsta/pages/new_post_pages/last_post_page.dart';
 import 'package:flutter_myinsta/widgets/gallery_button.dart';
 import 'package:flutter_myinsta/widgets/gallery_image.dart';
 import 'package:flutter_myinsta/widgets/sheets/gallry_button_sheet.dart';
@@ -33,138 +33,154 @@ class _GelleryPageState extends State<GelleryPage> {
 
   @override
   void initState() {
-    super.initState();  
+    super.initState();
     all_Images_url = MyImage_Video_taker.RunAndLoad();
+    // ignore: unused_local_variable
     for (var e in all_Images_url[0]) {
       select_image.add(false);
       select_count.add(0);
     }
-    if(select_image.isNotEmpty){
-     setState(() {
-       file_image =  File(all_Images_url[0][0]);
-     });
+    if (select_image.isNotEmpty) {
+      setState(() {
+        file_image = File(all_Images_url[0][0]);
+      });
     }
-  
   }
- 
 
   @override
   Widget build(BuildContext context) {
     var allsize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        leading: IconButton(
-            onPressed: () {
-              print(widget.story);
-              if (widget.story!.compareTo("STORY") == 0) {
-                MyMain_page_control.go_page(1);
-              } else {
-                Navigator.pop(context);
-                MyMain_page_control.go_page(1);
-              }
-            },
-            icon: Icon(Feather.x, color: Colors.black, size: 30,)),
-        title: Text("New Post",
-            style: TextStyle(color: Colors.black, fontSize: 22, )),
-        actions: [
-          // @next button
-          IconButton(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          leading: IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_)=> Image_effect_page(image_file: file_image!,)));
+                if (widget.story!.compareTo("STORY") == 0) {
+                  MyMain_page_control.go_page(1);
+                } else {
+                  Navigator.pop(context);
+                  MyMain_page_control.go_page(1);
+                }
               },
               icon: Icon(
-                MaterialIcons.arrow_forward,
-                color: Colors.blue,
+                Feather.x,
+                color: Colors.black,
                 size: 30,
-              ))
-        ],
-      ),
+              )),
+          title: Text("New Post",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 22,
+              )),
+          actions: [
+            // @next button
+            IconButton(
+                onPressed: () {
+                  PagePush.Push(context, Image_effect_page(
+                    image_file: file_image!, isRound: false, nextbutton: () {
+                          PagePush.Push(context, Last_post_Page(file_image: file_image!));
+                        },
+                      ));
+                },
+                icon: Icon(
+                  MaterialIcons.arrow_forward,
+                  color: Colors.blue,
+                  size: 30,
+                ))
+          ],
+        ),
 
-      // @start body routes
-      body: select_image.isNotEmpty? Container(
-        height: allsize.height,
-        width: allsize.width,
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Container(
+        // @start body routes
+        body: select_image.isNotEmpty
+            ? Container(
                 height: allsize.height,
                 width: allsize.width,
-                child: Column(
+                child: Stack(
                   children: [
-                    // @single big  image panel
-                    Container(
-                        height: allsize.height / 2,
+                    SingleChildScrollView(
+                      child: Container(
+                        height: allsize.height,
                         width: allsize.width,
-                        color: Colors.grey,
-                        padding: EdgeInsets.symmetric(vertical: 20.0),
-                        child: file_image == null ?  Image(
-                                fit: BoxFit.cover,
-                                image: FileImage(File(all_Images_url[0].first)),
-                                filterQuality: FilterQuality.high,
-                              ) : Image(
-                                fit: BoxFit.cover,
-                                image: FileImage(file_image!),
-                                filterQuality: FilterQuality.high,
-                              )
+                        child: Column(
+                          children: [
+                            // @single big  image panel
+                            Container(
+                                height: allsize.height / 2,
+                                width: allsize.width,
+                                color: Colors.grey,
+                                padding: EdgeInsets.symmetric(vertical: 20.0),
+                                child: file_image == null
+                                    ? Image(
+                                        fit: BoxFit.cover,
+                                        image: FileImage(
+                                            File(all_Images_url[0].first)),
+                                        filterQuality: FilterQuality.high,
+                                      )
+                                    : Image(
+                                        fit: BoxFit.cover,
+                                        image: FileImage(file_image!),
+                                        filterQuality: FilterQuality.high,
+                                      )),
+                            Container(
+                              height: 50,
+                              color: Colors.white,
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  // @gallery panel
+                                  GestureDetector(
+                                    onTap: () {
+                                      GalleryButtonSheet.Show(context);
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Text("Gallery  ",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold)),
+                                        Image.asset('assets/images/down.png',
+                                            height: 16, width: 16)
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      MyGalleryButton.build(
+                                          "assets/images/SVGs/copy-outline.svg",
+                                          0, () {
+                                        setState(() {
+                                          if (MyGalleryButton.iselect &&
+                                              select_able) {
+                                            MyGalleryButton.iselect = false;
+                                            for (int i = 0;
+                                                i < select_image.length;
+                                                i++) {
+                                              select_image[i] = false;
+                                              select_count[i] = 0;
+                                            }
+                                            select_able = false;
+                                          } else {
+                                            MyGalleryButton.iselect = true;
+                                            select_able = true;
+                                            select_image[0] = true;
+                                            select_count[0] = 1;
+                                          }
+                                        });
+                                      }),
+                                      SizedBox(width: 10.0),
+                                      MyGalleryButton.build(
+                                          Feather.camera, 1, () {}),
+                                    ],
+                                  )
+                                ],
                               ),
-                    Container(
-                      height: 50,
-                      color: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // @gallery panel
-                          GestureDetector(
-                            onTap: () {
-                              GalleryButtonSheet.Show(context);
-                            },
-                            child: Row(
-                              children: [
-                                Text("Gallery  ",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold)),
-                                Image.asset('assets/images/down.png',
-                                    height: 16, width: 16)
-                              ],
                             ),
-                          ),
-                          Row(
-                            children: [
-                              MyGalleryButton.build(
-                                  "assets/images/SVGs/copy-outline.svg", 0, () {
-                                setState(() {
-                                  if (MyGalleryButton.iselect && select_able) {
-                                    MyGalleryButton.iselect = false;
-                                    for (int i = 0;
-                                        i < select_image.length;
-                                        i++) {
-                                      select_image[i] = false;
-                                      select_count[i] = 0;
-                                    }
-                                    select_able = false;
-                                  } else {
-                                    MyGalleryButton.iselect = true;
-                                    select_able = true;
-                                    select_image[0] = true;
-                                    select_count[0] = 1;
-                                  }
-                                });
-                              }),
-                              SizedBox(width: 10.0),
-                              MyGalleryButton.build(Feather.camera, 1, () {}),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      // @all image viewer
-                      child: GridView.count(
+                            Expanded(
+                                // @all image viewer
+                                child: GridView.count(
                               crossAxisCount: 4,
                               crossAxisSpacing: 2,
                               mainAxisSpacing: 2,
@@ -212,23 +228,23 @@ class _GelleryPageState extends State<GelleryPage> {
                                         });
                                       }))
                                   .toList(),
-                            )
-                    )
+                            ))
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ),
-          ],
-        ),
-      ): Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-          Text("No Image"),
-          Text("No Vedio"),
-        ],),
-      )
-    );
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("No Image"),
+                    Text("No Vedio"),
+                  ],
+                ),
+              ));
   }
 
   List nulllist = [1, 2, 3];
@@ -262,9 +278,7 @@ class _GelleryPageState extends State<GelleryPage> {
     int temple = 0;
     for (int i = 0; i < select_count.length; i++) {
       if (!select_count.contains(i) && select_count.contains(i + 1)) {
-        print(i);
         temple = i;
-        print("temp = $temple");
       }
     }
     if (temple > 0) {
@@ -272,13 +286,9 @@ class _GelleryPageState extends State<GelleryPage> {
         if (temple < select_count[j]) {
           setState(() {
             select_count[j] = select_count[j] - 1;
-            print("select_count[j] = ${select_count[j]}");
           });
         }
       }
     }
-
-    print(select_image);
-    print(select_count);
   }
 }

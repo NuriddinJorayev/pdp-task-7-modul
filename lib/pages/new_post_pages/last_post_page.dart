@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_myinsta/pages/home_paga.dart';
 
 class Last_post_Page extends StatefulWidget {
   final File file_image;
@@ -12,7 +14,22 @@ class Last_post_Page extends StatefulWidget {
 }
 
 class _Last_post_PageState extends State<Last_post_Page> {
+  int min_line = 1;
+  int max_line = 2;
+  var my_focus;
+  var control = TextEditingController();
+  var keyboardKey = TextInputType.text;
   List<bool> _switch_values = [false, false, false, false];
+  @override
+  void initState() {
+    super.initState();
+   
+  }
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     var allSize = MediaQuery.of(context).size;
@@ -21,7 +38,7 @@ class _Last_post_PageState extends State<Last_post_Page> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
-            onPressed: () {
+            onPressed: () {            
               Navigator.pop(context);
             },
             icon: Icon(
@@ -33,7 +50,9 @@ class _Last_post_PageState extends State<Last_post_Page> {
             style: TextStyle(color: Colors.black, fontSize: 22)),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, Home().id);
+              },
               icon: Icon(
                 Ionicons.md_checkmark,
                 color: Colors.blue,
@@ -41,61 +60,79 @@ class _Last_post_PageState extends State<Last_post_Page> {
               )),
         ],
       ),
-      // start appbar
+      // finish appbar
       body: SingleChildScrollView(
         child: Container(
           height: allSize.height,
           width: allSize.width,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Image(
-                      height: allSize.width / 6,
-                      width: allSize.width / 6,
-                      image: FileImage(widget.file_image),
-                      fit: BoxFit.cover,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(15.0),
+                      child: Image(
+                        height: allSize.width / 6,
+                        width: allSize.width / 6,
+                        image: FileImage(widget.file_image),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Write a caption...",
-                          hintStyle: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600)),
-                    ),
-                  )
-                ],
-              ),
-              Divider(color: Colors.grey[600], thickness: 1),
-              _simple_text("Tag people"),
-              Divider(color: Colors.grey[600], thickness: 1),
-              _simple_text("Add Location"),
-              Divider(color: Colors.grey[600], thickness: 1),
-              SizedBox(height: 5),
-              _simple_text("Also post to"),
-              _switch_Text("Facebook", 0),
-              _switch_Text("Twitter", 1),
-              _switch_Text("Tumblr", 2),
-              _switch_Text("Ok.ru", 3),
-              Divider(color: Colors.grey[600], thickness: 1),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 15),
-                child: Text(
-                  "Advanced setting",
-                  style: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600),
+                    Expanded(
+                      child: TextField(
+                        controller: control, 
+                        keyboardType: TextInputType.multiline, 
+                                           
+                        onChanged: (i){
+                              print("maxline =  $max_line");
+                              print("maxline =  ${i.length / 31}");
+                          setState(() {
+                            if((i.length / 31) > max_line){
+                              max_line++; 
+                            }
+                           });
+                        },
+                        maxLines: max_line,
+                        minLines: min_line,
+                        decoration: InputDecoration(
+                          
+                            border: InputBorder.none,
+                            hintText: "Write a caption...",
+                            hintStyle: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600)),
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
+                Divider(color: Colors.grey[600], thickness: 1),
+                _simple_text("Tag people"),
+                Divider(color: Colors.grey[600], thickness: 1),
+                _simple_text("Add Location"),
+                Divider(color: Colors.grey[600], thickness: 1),
+                SizedBox(height: 5),
+                _simple_text("Also post to"),
+                _switch_Text("Facebook", 0),
+                _switch_Text("Twitter", 1),
+                _switch_Text("Tumblr", 2),
+                _switch_Text("Ok.ru", 3),
+                Divider(color: Colors.grey[600], thickness: 1),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 15),
+                  child: Text(
+                    "Advanced setting",
+                    style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+                SizedBox(height: 20.0)
+              ],
+            ),
           ),
         ),
       ),

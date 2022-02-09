@@ -29,11 +29,11 @@ class MyFeedUserPanel extends StatelessWidget {
               children: [
                 Text(title,
                     style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold)),
+                        color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: .5)),
                 SizedBox(height: 2.0),
                 Text(subtitle,
                     style: TextStyle(
-                        color: Colors.black54, fontWeight: FontWeight.normal))
+                        color: Colors.black54, fontSize: 14, fontWeight: FontWeight.normal))
               ],
             ),
           ),

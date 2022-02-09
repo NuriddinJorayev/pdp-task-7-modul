@@ -27,8 +27,6 @@ class MyImage_Video_taker {
     Directory f = Directory("/storage/emulated/0/");
     search(f, imnage_format, video_format);
     all_file_list.addAll({images, videos});
-    print(all_file_list[0].length);
-    print(all_file_list[1].length);
    
     return all_file_list;
   }
@@ -50,7 +48,6 @@ class MyImage_Video_taker {
           search(Directory(e.path + "/"), imnage_format, video_format);
         }
       } else {
-        print(e.path);
       }
     }
   }

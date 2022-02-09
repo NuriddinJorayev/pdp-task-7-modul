@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_myinsta/functions/page_control.dart';
-import 'package:flutter_myinsta/functions/permissions.dart';
 import 'package:flutter_myinsta/models/post.dart';
 import 'package:flutter_myinsta/models/temp.dart';
 import 'package:flutter_myinsta/widgets/feed_user_panel.dart';
