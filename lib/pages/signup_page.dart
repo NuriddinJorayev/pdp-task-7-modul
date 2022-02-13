@@ -124,7 +124,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   _doSignUp(String email, String password) async{
-    var email_vaidation = RegExp(r"^[A-z0-9.A-z0-9.!$%&'*+-/=?^_`{|}~]+@(g|e)mail+\.[A-z]+").hasMatch(email);
+    var email_vaidation = RegExp(r"^[A-z0-9.A-z0-9.!$%&'*+-/=?^_`{|}~]+@(g|e|G|E)mail+\.[A-z]+").hasMatch(email);
     var password_vaidation = RegExp(r"^(?=.*[0-9])(?=.*[A-Z])(?=.*[.!#$@%&'*+/=?^_`{|}~-]).{8,}$").hasMatch(password);
     // ignore: unused_local_variable
     var userid = await FirebaseAuth.instance.currentUser;
