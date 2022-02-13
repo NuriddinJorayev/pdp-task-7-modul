@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:flutter_myinsta/functions/page_control.dart';
 import 'package:flutter_myinsta/models/post.dart';
 import 'package:flutter_myinsta/models/temp.dart';
 import 'package:flutter_myinsta/widgets/feed_user_panel.dart';
 import 'package:flutter_myinsta/widgets/my_rich_text.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_like_button/insta_like_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -75,20 +75,25 @@ class _MyFeedPageState extends State<MyFeedPage> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0.0,
-          centerTitle: true,
-          title: Text("Instagram",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: 'Billbong_family',
-                  fontSize: 40)),
+          leadingWidth: 0,
+          title: Row(
+            children: [
+              Text("Home",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 30)),
+                      Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black,)
+            ],
+          ),
           actions: [
-            IconButton(
-              onPressed: () {
-                MyPage_Controller.go_page(2);
-              },
-              icon: Icon(Icons.camera_alt, color: Colors.black),
-            )
-          ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SvgPicture.asset("assets/images/SVGs/icons8-facebook-messenger(1).svg",
+               height: 30,
+              width: 30
+                ),
+            ),
+                     ],
         ),
         body: Container(
           height: allsize.height,

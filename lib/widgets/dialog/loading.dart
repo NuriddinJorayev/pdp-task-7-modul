@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class Loading_dialog {
 
   static show(BuildContext context){
+    // ignore: unused_local_variable
     var size = MediaQuery.of(context).size;
     showDialog(context: context, builder: (con)=> Dialog(
       child: Container(

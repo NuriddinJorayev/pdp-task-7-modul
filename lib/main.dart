@@ -1,20 +1,30 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:camera/camera.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_myinsta/pages/gallery.dart';
 import 'package:flutter_myinsta/pages/home_paga.dart';
 import 'package:flutter_myinsta/pages/my_profile_page.dart';
 import 'package:flutter_myinsta/pages/signin_page.dart';
 import 'package:flutter_myinsta/pages/signup_page.dart';
+import 'package:flutter_myinsta/services/share_prefs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  
+  await SharedPreferences.getInstance();
   await availableCameras();
-  runApp(const MyApp());
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  var con_empty = PageController();
+   MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +34,25 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Home(),
+      home: isSigned(),
       routes: {
         SignInPage().id : (context) => SignInPage(),
         SignUpPage().id : (context) => SignUpPage(),
         GelleryPage().id : (context) => GelleryPage(),
-        MyProfilePage(userName: 'Nuriddin',).id : (context) => MyProfilePage(userName: "Nuriddin"),
+        MyProfilePage(userName: 'Nuriddin', settting_control: con_empty).id : (context) => MyProfilePage(userName: "Nuriddin", settting_control: con_empty),
         Home().id : (context) => Home(),
       },
     );
   }
+  Widget isSigned()=> StreamBuilder<User?>(
+    stream: FirebaseAuth.instance.authStateChanges(),
+    builder: (context, Snapshot) {
+        if (Snapshot.hasData) {
+          Prefs.Save(Snapshot.data!.uid);
+          return Home();
+        }
+        return SignInPage();
+      },
+    );
+  
 }

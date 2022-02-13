@@ -1,6 +1,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_myinsta/functions/page_control.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -108,6 +109,7 @@ class _MySearchPageState extends State<MySearchPage> {
                   width: allSize.width,
                   color: Colors.grey,
                   alignment: Alignment.bottomCenter,
+                  // textfiel parent
                   child: Container(
                     padding: EdgeInsets.only(left: 15, right: 20),
                     height: height,

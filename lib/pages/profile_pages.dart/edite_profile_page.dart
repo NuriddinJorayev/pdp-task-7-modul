@@ -1,14 +1,11 @@
 
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:flutter_myinsta/functions/page_opener_push.dart';
 import 'package:flutter_myinsta/models/temp_local_data.dart';
 import 'package:flutter_myinsta/pages/profile_pages.dart/change_profile_photo_page.dart';
-import 'package:flutter_myinsta/widgets/dialog/loading.dart';
-import 'package:flutter_myinsta/widgets/sheets/edit_profile_sheet.dart';
 
 class EditeProfilePage extends StatefulWidget {
   final cam;
@@ -112,6 +109,7 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
     // circle image builder
   Widget _user_image(BuildContext con, String url)=>ClipRRect(
     borderRadius: BorderRadius.circular(MediaQuery.of(con).size.width / 4),
+    // ignore: unnecessary_null_comparison
     child:url != null ? Image(
     height: MediaQuery.of(con).size.width / 4,
     width: MediaQuery.of(con).size.width / 4,

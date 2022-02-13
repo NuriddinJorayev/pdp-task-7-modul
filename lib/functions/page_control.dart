@@ -9,8 +9,13 @@ class MyPage_Controller {
 
   static go_page(int index) {
     if (_pageController != null) {
-      _pageController!.animateToPage(index,
-          duration: Duration(milliseconds: 100), curve: Curves.easeOutBack);
+       WidgetsBinding.instance?.addPostFrameCallback((_) {
+                      if (_pageController!.hasClients) {
+                        _pageController!.animateToPage(index,
+                            duration: Duration(milliseconds: 1),
+                            curve: Curves.easeInOut);
+                      }
+                    });
     }
   }
 }

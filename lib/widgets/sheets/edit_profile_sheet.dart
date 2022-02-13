@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Edit_prfile_sheet {
   static Show(BuildContext context){
-    showModalBottomSheet(
+    showModalBottomSheet(      
       context: context, 
       backgroundColor: Colors.transparent,
       builder: (con)=>Column(

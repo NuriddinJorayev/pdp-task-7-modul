@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class Internet_error {
   static show(BuildContext context) {
+    // ignore: unused_local_variable
     var size = MediaQuery.of(context).size;
     showDialog(
         context: context,

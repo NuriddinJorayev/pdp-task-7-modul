@@ -1,24 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:flutter_myinsta/functions/main_page_controller.dart';
 import 'package:flutter_myinsta/functions/page_control.dart';
 import 'package:flutter_myinsta/models/temp_local_data.dart';
-import 'package:flutter_myinsta/pages/home_paga.dart';
-import 'package:flutter_myinsta/pages/profile_pages.dart/change_profile_photo_page.dart';
 import 'package:flutter_myinsta/pages/profile_pages.dart/edite_profile_page.dart';
 import 'package:flutter_myinsta/widgets/profile_widgets/discover_people.dart';
 import 'package:flutter_myinsta/widgets/profile_widgets/users_view.dart';
+import 'package:flutter_myinsta/widgets/sheets/profile_menu.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MyProfilePage extends StatefulWidget {
   final String id = "my_profile_page";
+    final PageController settting_control;
   final String userName;
   // final List<String> posted_images = [];
-  const MyProfilePage({Key? key,  required this.userName}) : super(key: key);
+  const MyProfilePage({Key? key,  required this.userName, required this.settting_control}) : super(key: key);
 
   @override
   State<MyProfilePage> createState() => _MyProfilePageState();
@@ -82,7 +80,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               leadingWidth: 1,
               title: GestureDetector(
                 onTap: () {
-                  print("object");
+                  print("object");                 
                   // 
                 },
                 child: Row(
@@ -101,14 +99,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 ),
               ),
               actions: [
-                Icon(
-                  FontAwesome.plus_square_o,
-                  color: Colors.black,
-                ),
-                SizedBox(width: 20),
-                Icon(
-                  CupertinoIcons.line_horizontal_3,
-                  color: Colors.black,
+                SvgPicture.asset("assets/images/SVGs/noun-new-1886678.svg",
+                height: 26,
+                width: 26),
+                SizedBox(width: 15),               
+                GestureDetector(
+                  onTap: (){
+                    ProfileMenuSheet.show(context, widget.settting_control);
+                  },
+                  child: SvgPicture.asset( 'assets/images/SVGs/new_menu.svg',
+                  height: 35,
+                  width: 35),
                 ),
                 SizedBox(width: 10),
               ],
@@ -128,18 +129,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     // Edit profile button
                     UserView.Edit_profile(() async{
                   
+                     // ignore: unused_local_variable
                      var info =await  Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => EditeProfilePage(cam: cam)));
-                          print("keldi yana");
+                          print("keldi yana");                     
     
-                       
-    
-                          setState(() {
-                            
-                          });
-                    }, () {setState(() {
-                      
-                    }); }),
+                          setState(() {  });
+                    }, () {setState(() {       
+                    }); 
+                    }),
                     // discover people panel
                     AnimatedContainer(
                         duration: Duration(milliseconds: 800),
