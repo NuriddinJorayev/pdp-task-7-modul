@@ -1,5 +1,5 @@
-import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
@@ -28,7 +28,7 @@ class UserView {
                 child: img_url != null ? img_url.isNotEmpty?
                  ClipRRect(
                    borderRadius: BorderRadius.circular(100),
-                   child: Image.file(File(img_url), fit: BoxFit.fill,)) : Icon(Feather.user)
+                   child: CachedNetworkImage(imageUrl: img_url, fit: BoxFit.fill,)) : Icon(Feather.user)
                   : Icon(Feather.user)
               ),
             ),

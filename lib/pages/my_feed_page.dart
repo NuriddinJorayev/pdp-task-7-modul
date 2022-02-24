@@ -86,14 +86,24 @@ class _MyFeedPageState extends State<MyFeedPage> {
             ],
           ),
           actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SvgPicture.asset("assets/images/SVGs/icons8-facebook-messenger(1).svg",
-               height: 30,
-              width: 30
-                ),
+            GestureDetector(
+              onTap: ()async{
+                // DataService.SetNewData();
+                print("cloud data");
+                // DataService.Updata("Nurik nima gaplar yana o'zingda");
+                // QuerySnapshot<Map<String, dynamic>> query = await DataService.getData();
+                // print(query.docs.first.data());
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SvgPicture.asset("assets/images/SVGs/icons8-facebook-messenger(1).svg",
+                 height: 30,
+                width: 30
+                  ),
+              ),
             ),
                      ],
+                     
         ),
         body: Container(
           height: allsize.height,

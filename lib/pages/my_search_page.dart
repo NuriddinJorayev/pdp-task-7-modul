@@ -4,10 +4,16 @@ import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_myinsta/functions/page_control.dart';
+import 'package:flutter_myinsta/models/myUser.dart';
+import 'package:flutter_myinsta/pages/sreach_page/other_user_view.dart';
+import 'package:flutter_myinsta/pages/sreach_page/search_page_two.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+// ignore: must_be_immutable
 class MySearchPage extends StatefulWidget {
-  const MySearchPage({Key? key}) : super(key: key);
+  MyUser? user;
+   MySearchPage({Key? key, this.user}) : super(key: key);
+   MySearchPage.from({Key? key, this.user}) : super(key: key);
 
   @override
   State<MySearchPage> createState() => _MySearchPageState();
@@ -57,6 +63,8 @@ class _MySearchPageState extends State<MySearchPage> {
   var control2 = ScrollController();
   var control_textfield = TextEditingController();
   double last_offset = 0.0;
+  var page_control = PageController();
+  var tempUser ;
 
   Future<bool> system_back_function() async {
     MyPage_Controller.go_page(0);
@@ -72,9 +80,19 @@ class _MySearchPageState extends State<MySearchPage> {
     scroll_controller.loadComplete();
   }
 
+  go_page(int i){   
+     WidgetsBinding.instance?.addPostFrameCallback((_) {
+                      if (page_control.hasClients){
+                        page_control.animateToPage(i,
+                            duration: Duration(milliseconds: 1),
+                            curve: Curves.linear);
+                      }
+                    });
+  }
+
   @override
   void initState() {
-    super.initState();
+    super.initState();    
     control2.addListener(() {
       print(control2.position.pixels);
       setState(() {
@@ -84,7 +102,6 @@ class _MySearchPageState extends State<MySearchPage> {
           control1.jumpTo(50);
         }
       });
-
       // control1.animateTo(control2.offset , duration: Duration(milliseconds: 100), curve: Curves.easeInBack );
     });
   }
@@ -96,145 +113,162 @@ class _MySearchPageState extends State<MySearchPage> {
 
     return WillPopScope(
       onWillPop: system_back_function,
-      child: Scaffold(
-        body: SingleChildScrollView(
-          controller: control1,
-          child: Container(
-            height: allSize.height,
-            width: allSize.width,
-            child: Column(
-              children: [
-                Container(
-                  height: height + height,
-                  width: allSize.width,
-                  color: Colors.grey,
-                  alignment: Alignment.bottomCenter,
-                  // textfiel parent
-                  child: Container(
-                    padding: EdgeInsets.only(left: 15, right: 20),
-                    height: height,
-                    width: allSize.width,
-                    color: Colors.white,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 6),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey.withOpacity(.3),
-                      ),
-                      // textfield
-                      child: TextField(
-                        controller: control_textfield,
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: .8,
-                            height: 1.5),
-                        cursorColor: Colors.black,
-                        cursorWidth: 1,
-                        cursorHeight: 30,
-                        textAlignVertical: TextAlignVertical.center,
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              FlutterIcons.search_fea,
-                              color: Colors.black,
-                              size: 19,
+      child: PageView(
+        controller: page_control,
+        physics: NeverScrollableScrollPhysics(),
+        children: [
+          Scaffold(
+            body: SingleChildScrollView(
+              controller: control1,
+              child: Container(
+                height: allSize.height,
+                width: allSize.width,
+                child: Column(
+                  children: [
+                    Container(
+                      height: height + height,
+                      width: allSize.width,
+                      color: Colors.grey,
+                      alignment: Alignment.bottomCenter,
+                      // textfiel parent
+                      child: Container(
+                        padding: EdgeInsets.only(left: 15, right: 20),
+                        height: height,
+                        width: allSize.width,
+                        color: Colors.white,
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey.withOpacity(.3),
+                          ),
+                          // textfield
+                          child: GestureDetector(
+                            onTap: (){
+                                go_page(1);
+                                setState(() {
+                                  
+                                });
+                              },
+                            child: TextField(                                                        
+                            enabled: false,
+                              controller: control_textfield,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: .8,
+                                  height: 1.5),
+                              cursorColor: Colors.black,
+                              cursorWidth: 1,
+                              cursorHeight: 30,
+                              textAlignVertical: TextAlignVertical.center,
+                              decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    FlutterIcons.search_fea,
+                                    color: Colors.black,
+                                    size: 19,
+                                  ),
+                                  border: InputBorder.none,
+                                  hintText: "Search",
+                                  hintStyle: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black.withAlpha(150),
+                                      letterSpacing: .8,
+                                      height: 1.2)),
                             ),
-                            border: InputBorder.none,
-                            hintText: "Search",
-                            hintStyle: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black.withAlpha(150),
-                                letterSpacing: .8,
-                                height: 1.2)),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: SmartRefresher(
-                    controller: scroll_controller,
-                    enablePullUp: true,
-                    
-                    header: ClassicHeader(
-                    
-                        idleText: '',
-                        releaseText: "",
-                        failedText: '',
-                        completeText: '',
-                        refreshingText: '',
-                        canTwoLevelText: '',
-                        refreshingIcon: CircularProgressIndicator(
-                          color: Colors.grey[400],
-                          strokeWidth: 2,
-                        )),
+                    Expanded(
+                      child: SmartRefresher(
+                        controller: scroll_controller,
+                        enablePullUp: true,
+                        
+                        header: ClassicHeader(
+                        
+                            idleText: '',
+                            releaseText: "",
+                            failedText: '',
+                            completeText: '',
+                            refreshingText: '',
+                            canTwoLevelText: '',
+                            refreshingIcon: CircularProgressIndicator(
+                              color: Colors.grey[400],
+                              strokeWidth: 2,
+                            )),
 
-                   
-                    footer: ClassicFooter(  
-                      idleText: "",
-                      failedText: "",
-                      noDataText: "",
-                      loadingText: "",
-                      canLoadingText: "",  
-                      idleIcon: Container(
-                        height: 50,
-                        width: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1.8
-                          ),
-                          shape: BoxShape.circle
-                        ),
-                        child: Icon(Feather.plus, size: 25, color: Colors.grey,),
-
-                      ),    
-                      onClick: (){
-                        scroll_controller.requestLoading();
-                      },             
-                      failedIcon: Container(
-                        height: 50,
-                        width: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1.8
-                          ),
-                          shape: BoxShape.circle
-                        ),
-                        child: Icon(Feather.plus, size: 25, color: Colors.grey,),
-
-                      ), 
-                      loadingIcon:  Container(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator(                        
-                            color: Colors.grey[400],
-                            strokeWidth: 2,
-                          
-                          ),
-                      ),
-                    ),
-
-                     onLoading: onBottem_loading,  
-                     onTwoLevel: (bool l){
                        
-                     },                
-                    onRefresh: onRefresh,
-                    
-                    child: ListView(
-                      controller: control2,
-                      children: _all_items(
-                          allSize.height * .17, (allSize.width / 3) - 1, list),
+                        footer: ClassicFooter(  
+                          idleText: "",
+                          failedText: "",
+                          noDataText: "",
+                          loadingText: "",
+                          canLoadingText: "",  
+                          idleIcon: Container(
+                            height: 50,
+                            width: 50,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.8
+                              ),
+                              shape: BoxShape.circle
+                            ),
+                            child: Icon(Feather.plus, size: 25, color: Colors.grey,),
+
+                          ),    
+                          onClick: (){
+                            scroll_controller.requestLoading();
+                          },             
+                          failedIcon: Container(
+                            height: 50,
+                            width: 50,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.8
+                              ),
+                              shape: BoxShape.circle
+                            ),
+                            child: Icon(Feather.plus, size: 25, color: Colors.grey,),
+
+                          ), 
+                          loadingIcon:  Container(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(                        
+                                color: Colors.grey[400],
+                                strokeWidth: 2,
+                              
+                              ),
+                          ),
+                        ),
+
+                         onLoading: onBottem_loading,  
+                         onTwoLevel: (bool l){
+                           
+                         },                
+                        onRefresh: onRefresh,
+                        
+                        child: ListView(
+                          controller: control2,
+                          children: _all_items(
+                              allSize.height * .17, (allSize.width / 3) - 1, list),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          SearchPageTwo(page_control: page_control,),
+          OtherUserview(pageController: page_control,)
+        ],
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_myinsta/pages/signin_page.dart';
 import 'package:flutter_myinsta/services/auth_service.dart';
+import 'package:flutter_myinsta/services/hive_db.dart';
+import 'package:flutter_myinsta/services/share_prefs.dart';
 
 class LogoutDialog {
   static show(BuildContext context) {
@@ -30,9 +32,11 @@ class LogoutDialog {
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          onTap: (){
-                            print("tapped");
+                          onTap: ()async{
                             AuthService.AuthSignOut();
+                            Prefs.Delete();
+                            var id  = await Prefs.Load();
+                            Hive_db.Delete(id);
                               Navigator.pop(con);
                         Navigator.of(context).pushReplacementNamed(SignInPage().id);
                         

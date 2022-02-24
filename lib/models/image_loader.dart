@@ -25,13 +25,14 @@ class MyImage_Video_taker {
 
   static List<List<String>> RunAndLoad() {
     Directory f = Directory("/storage/emulated/0/");
-    search(f, imnage_format, video_format);
-    all_file_list.addAll({images, videos});
-   
+    search(f, imnage_format, video_format);        
+    all_file_list.addAll({images, videos});   
     return all_file_list;
+    
   }
 
   static search(Directory d, List<String> im, List<String> vi){
+    
     for (var e in d.listSync()) {
       if (FileSystemEntity.isFileSync(e.path)) {
         if (img_end_With(e.path, im)) {
@@ -43,13 +44,21 @@ class MyImage_Video_taker {
             videos.add(e.path);
           }
         }
+        
       } else if (FileSystemEntity.isDirectorySync(e.path)) {
-        if (!e.path.endsWith("Android")) {
+        if (!e.path.endsWith("Android") && isNotHiddenFolder(e.path)) {
           search(Directory(e.path + "/"), imnage_format, video_format);
         }
       } else {
       }
     }
+    return;
+  }
+  // this is a filter function example
+
+  static bool isNotHiddenFolder(String s){
+    var b = RegExp(r"^(?!.*(\/\.)).*$").hasMatch(s);
+    return b;
   }
 
   static bool img_end_With(String s, List<String> img) {

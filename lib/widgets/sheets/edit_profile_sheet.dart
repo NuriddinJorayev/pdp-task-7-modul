@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Edit_prfile_sheet {
-  static Show(BuildContext context){
+  static Show(BuildContext context, Function() newphoto, Function() remove)async{
+   if(await Permission.camera.status.isGranted){
+     Permission.camera.request();
+   }
     showModalBottomSheet(      
       context: context, 
       backgroundColor: Colors.transparent,
@@ -21,7 +25,7 @@ class Edit_prfile_sheet {
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                     alignment: Alignment.centerLeft,
-                    child: Text("Change profile photo", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: .8),),
+                    child: Text("Change profile photo", style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w700, letterSpacing: .8),),
                   ),
                   Container( 
                     margin: EdgeInsets.symmetric(vertical: 5),
@@ -35,11 +39,11 @@ class Edit_prfile_sheet {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 5),
-                       Textbuild("New Profile Photo", () => null),
+                       Textbuild("New Profile Photo", newphoto),
                         SizedBox(height: 20),
-                       Textbuild("Import From Facebook", () => null),
+                       Textbuild("Import From Facebook", () {}),
                         SizedBox(height: 20),
-                       Textbuild("Remove prfile photo", () => null, Colors.red),
+                       Textbuild("Remove prfile photo", remove, Colors.red),
                         SizedBox(height: 20),
                       ],
                     ),
@@ -53,12 +57,18 @@ class Edit_prfile_sheet {
     ));
   }
 
-  static Widget Textbuild(text, Function() press, [color])=>Text(text, style: TextStyle(
-    color: color != null? color :  Colors.black, 
-    fontSize: 20, 
-    fontWeight: FontWeight.w400,
-     letterSpacing: .8
-  ));
+  static Widget Textbuild(text, Function() press, [color])=>GestureDetector(
+    onTap: press,
+    child: Container(
+      color: Colors.white,
+      child: Text(text, style: TextStyle(
+        color: color != null? color :  Colors.black, 
+        fontSize: 18, 
+        fontWeight: FontWeight.w400,
+         letterSpacing: .8
+      )),
+    ),
+  );
 
   static Widget longButton()=>Container(
     height: 5,

@@ -8,7 +8,6 @@ class Loading_dialog {
     showDialog(context: context, builder: (con)=> Dialog(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20),
-        height: 60,
         child: Row(
           children: [
             SizedBox(

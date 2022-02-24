@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -8,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_myinsta/functions/page_opener_push.dart';
 import 'package:flutter_myinsta/models/image_loader.dart';
-import 'package:flutter_myinsta/models/temp_local_data.dart';
 import 'package:flutter_myinsta/pages/new_post_pages/image_effect_page.dart';
+import 'package:flutter_myinsta/services/file_service.dart';
 
 class ChangeProfilePhoto extends StatefulWidget {
   final List<CameraDescription>? cameras;
@@ -25,6 +24,7 @@ class _ChangeProfilePhotoState extends State<ChangeProfilePhoto> {
   int cameraIndex = 1;
   File? selected_image;
   bool isGallery = true;
+  bool isLoading = false;
   var pageView_control = PageController();
   List<String> images_url = MyImage_Video_taker.RunAndLoad()[0];
 
@@ -33,14 +33,13 @@ class _ChangeProfilePhotoState extends State<ChangeProfilePhoto> {
     super.initState();
     // camera_initialize();
     setState(() {
-      selected_image = File(images_url[0]);
+    try { selected_image = File(images_url[0]); } catch(e){}  
+
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(WidgetsBinding.instance!.isRootWidgetAttached);
-
     var allSize = MediaQuery.of(context).size;
     return DefaultTabController(
       length: 2,
@@ -73,6 +72,7 @@ class _ChangeProfilePhotoState extends State<ChangeProfilePhoto> {
           actions: [
             IconButton(
                 onPressed: () {
+                  // ignore: unused_local_variable
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => Image_effect_page(
                           image_file: selected_image!,
@@ -176,9 +176,10 @@ class _ChangeProfilePhotoState extends State<ChangeProfilePhoto> {
     );
   }
 
-  nextButton(BuildContext context1) {
-    TempLocatData.image_url = selected_image!.path;
-    Navigator.pop(context1, "sdfghjkl");
+  nextButton(BuildContext context1) async {       
+    var url = await FileService.SetImage(File(selected_image!.path));
+    Navigator.pop( context);
+    Navigator.pop(context1, url);
   }
 
   Widget _itemsOfGrid(String url, Size size, press) => GestureDetector(
@@ -218,12 +219,13 @@ class CameraApp extends StatefulWidget {
 
 class _CameraAppState extends State<CameraApp> {
   late CameraController controller;
-  int cameraIndex = 1;
+  int cameraIndex = 0;
   String image_url = "";
 
   @override
   void initState() {
     super.initState();
+   
 
     controller =
         CameraController(widget.cam[cameraIndex], ResolutionPreset.max);
@@ -255,7 +257,8 @@ class _CameraAppState extends State<CameraApp> {
   }
 
   // take photo
-  Future<void> takePhoto(BuildContext context) async {
+   takePhoto(BuildContext context) async {
+
     final temp = await controller.takePicture();
     Directory d = Directory("/storage/emulated/0/Picture");
     int i = 0;
@@ -294,9 +297,10 @@ class _CameraAppState extends State<CameraApp> {
         ));
   }
 
-  nextButton(BuildContext context1) {
-    TempLocatData.image_url = image_url;
-    Navigator.pop(context1, "sdfghjkl");
+  nextButton(BuildContext context1) async {   
+    var url = await FileService.SetImage(File(image_url));
+    Navigator.pop(context);
+    Navigator.pop(context1, url);
   }
 
   @override

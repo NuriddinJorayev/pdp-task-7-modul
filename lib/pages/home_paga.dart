@@ -31,22 +31,31 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   var page_control = PageController(initialPage: 0);
   var main_page_control = PageController(initialPage: 1);
-  var settting_control = PageController(initialPage: 0);
+  var settting_control = PageController();
   ScrollPhysics scroll = NeverScrollableScrollPhysics();
 
   int _currentIndex = 0;
   @override
   void initState() {
     super.initState();
-    initialize();
-    MyPermission_status.RequestPermission();
+    initialize(); 
+    _check_permision();
+
+    
     MyPage_Controller.set(page_control);
     MyMain_page_control.set(main_page_control);
     scroll = ScrollPhysics();
   }
 
+ Future<void> _check_permision ()async{
+   await MyPermission_status.Request_storage();
+   await MyPermission_status.Request_manageExternalStorage();
+ }
+  
+
   var cam;
   initialize() async {
+    
     cam = await availableCameras();
     if (cam != null) {
       setState(() {});
@@ -101,9 +110,7 @@ class _HomeState extends State<Home> {
                       controller: settting_control,
                       physics: NeverScrollableScrollPhysics(),
                       children: [
-                        MyProfilePage(
-                            userName: "Nuriddin",
-                            settting_control: settting_control),
+                        MyProfilePage(settting_control: settting_control),
                         SettingPage(settting_control: settting_control)
                       ],
                     )

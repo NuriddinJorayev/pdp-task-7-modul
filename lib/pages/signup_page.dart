@@ -1,9 +1,13 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_myinsta/models/myUser.dart';
 import 'package:flutter_myinsta/pages/home_paga.dart';
 import 'package:flutter_myinsta/pages/signin_page.dart';
 import 'package:flutter_myinsta/services/auth_service.dart';
+import 'package:flutter_myinsta/services/data_service.dart';
+import 'package:flutter_myinsta/services/hive_db.dart';
+import 'package:flutter_myinsta/services/share_prefs.dart';
 import 'package:flutter_myinsta/utils/flutter_toast.dart';
 import 'package:flutter_myinsta/widgets/outline_button.dart';
 import 'package:flutter_myinsta/widgets/sign_text.dart';
@@ -127,7 +131,7 @@ class _SignUpPageState extends State<SignUpPage> {
     var email_vaidation = RegExp(r"^[A-z0-9.A-z0-9.!$%&'*+-/=?^_`{|}~]+@(g|e|G|E)mail+\.[A-z]+").hasMatch(email);
     var password_vaidation = RegExp(r"^(?=.*[0-9])(?=.*[A-Z])(?=.*[.!#$@%&'*+/=?^_`{|}~-]).{8,}$").hasMatch(password);
     // ignore: unused_local_variable
-    var userid = await FirebaseAuth.instance.currentUser;
+   
         if(email_vaidation && password_vaidation){
           setState(() {
             isLoading = true;
@@ -140,8 +144,9 @@ class _SignUpPageState extends State<SignUpPage> {
             value.compareTo("email-already-in-use")==0 ? {
               FlutterToastWidget.build(context, "email-already-in-use", 4)
             } : 
-             value.isNotEmpty? {
-              FlutterToastWidget.build(context, "Successfully registered", 4),
+             value.isNotEmpty? {            
+               local_data(),
+              FlutterToastWidget.build(context, "Successfully registered", 4),             
               Navigator.of(context).pushReplacementNamed(Home().id)
                
              } : {
@@ -160,6 +165,17 @@ class _SignUpPageState extends State<SignUpPage> {
         }
 
       
+  }
+  local_data()async{
+    try {
+       var userid = await FirebaseAuth.instance.currentUser;
+     await Prefs.Save(userid!.uid);
+    } catch (e) {
+    }
+    var id = await Prefs.Load();
+     MyUser myUser = MyUser(id, "", f_control.text, "", "", [], 0, 0);
+     DataService.SetNewData(myUser.Tojson());
+              Hive_db.set(id, myUser.Tojson());
   }
 
   _signTextPress() {
