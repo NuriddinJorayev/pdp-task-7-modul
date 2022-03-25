@@ -131,7 +131,7 @@ class _SearchPageTwoState extends State<SearchPageTwo> {
             elevation: 1.5,
             backgroundColor: Colors.white,
             leading: IconButton(
-              onPressed: () {                
+              onPressed: () {
                 go_page(0, temp[current_index]);
               },
               icon: Icon(AntDesign.arrowleft, color: Colors.black),
@@ -160,13 +160,21 @@ class _SearchPageTwoState extends State<SearchPageTwo> {
                               if (i == 0) {
                                 return first_widget();
                               }
-                              return User_Widgets.itemOfUser(
-                                  temp[i - 1].userName,
-                                  temp[i - 1].name,
-                                  temp[i - 1].user_image, () {
-                                    FocusScope.of(context).requestFocus(FocusNode());
-                                go_page(2, temp[i - 1]);
-                              }, isround_randim());
+                              return InkWell(
+                                onTap: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                  go_page(2, temp[i - 1]);
+                                },
+                                child: Container(
+                                  width: allsize.width,
+                                  child: User_Widgets.itemOfUser(
+                                      temp[i - 1].userName,
+                                      temp[i - 1].name,
+                                      temp[i - 1].user_image,
+                                      isround_randim()),
+                                ),
+                              );
                             },
                           )
                         : Column(
@@ -182,16 +190,14 @@ class _SearchPageTwoState extends State<SearchPageTwo> {
                             "Nuriddin",
                             "just do it\nthis task",
                             "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
-                            () {},
                             isround_randim()),
                         User_Widgets.itemOfUser(
                             "Nuriddin",
                             "just do it",
                             "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
-                            () {},
                             true),
                         User_Widgets.itemOfUser(
-                            "Nuriddin", "just do it", "", () {}, true),
+                            "Nuriddin", "just do it", "", true),
                       ],
                     )),
                 Container(color: Colors.greenAccent),

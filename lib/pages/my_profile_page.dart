@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:animated_shimmer/animated_shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_myinsta/functions/page_control.dart';
 import 'package:flutter_myinsta/models/myUser.dart';
+import 'package:flutter_myinsta/models/post.dart';
 import 'package:flutter_myinsta/pages/profile_pages.dart/edite_profile_page.dart';
 import 'package:flutter_myinsta/services/data_service.dart';
 import 'package:flutter_myinsta/services/hive_db.dart';
@@ -14,6 +18,7 @@ import 'package:flutter_myinsta/widgets/profile_widgets/discover_people.dart';
 import 'package:flutter_myinsta/widgets/profile_widgets/users_view.dart';
 import 'package:flutter_myinsta/widgets/sheets/profile_menu.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class MyProfilePage extends StatefulWidget {
   final String id = "my_profile_page";
@@ -33,7 +38,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   int followers = 0;
   int following = 0;
   bool isLoading = false;
-  List posts = [];
+  List<Post> posts = [];
   List<bool> follow_button_isSelected = [
     false,
     false,
@@ -44,40 +49,34 @@ class _MyProfilePageState extends State<MyProfilePage> {
     false
   ];
   bool panelIsOpen = false;
-  List tempImageList = [
-    "https://cloudfront-us-east-2.images.arcpublishing.com/reuters/F6INOOMSRRL5XOOQDRPZUWPWBA.jpg",
-    "https://api.contentstack.io/v2/assets/575e4d1c0342dfd738264a1f/download?uid=bltada7771f270d08f6",
-    "https://cdn.wallpapersafari.com/37/79/W90lpP.jpg",
-    "https://cdn.wallpapersafari.com/23/77/DP60WY.jpeg",
-    "https://cdn.wallpapersafari.com/65/97/Jpx0cr.jpg",
-  ];
+  List tempImageList = [];
   int tabBar_select_index = 0;
   bool user_view = true;
 
   @override
   void initState() {
-
-
-        _runData();
-
+    _runData();
     super.initState();
     initialize();
     initi_filds();
   }
 
-  initi_filds() async{
+  initi_filds() async {
     var id = await Prefs.Load();
     if (mounted) {
-      setState(() {
-        var user = MyUser.FromJson(Hive_db.load(id));
-        user_image = user.user_image.isNotEmpty? user.user_image : user_image;
-        userName = user.userName.isNotEmpty ? user.userName : userName;
-        name = user.name.isNotEmpty ? user.name : name;
-        bio = user.bio.isNotEmpty ? user.bio : bio;
-        followers = user.followers != 0 ? user.followers : followers;
-        following = user.following != 0 ? user.following : following;
-        posts = user.posts.isNotEmpty ? user.posts : posts;
-      });
+      try {
+        var user = MyUser.FromJson(await DataService.getData());
+        setState(() {
+          user_image =
+              user.user_image.isNotEmpty ? user.user_image : user_image;
+          userName = user.userName.isNotEmpty ? user.userName : userName;
+          name = user.name.isNotEmpty ? user.name : name;
+          bio = user.bio.isNotEmpty ? user.bio : bio;
+          followers = user.followers != 0 ? user.followers : followers;
+          following = user.following != 0 ? user.following : following;
+          posts = user.posts.isNotEmpty ? user.posts : posts;
+        });
+      } catch (e) {}
     }
   }
 
@@ -93,29 +92,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   Future<bool> system_back_function() async {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-                      if (MyPage_Controller.pageController!.hasClients) {
-                        MyPage_Controller.pageController!.animateToPage(0,
-                            duration: Duration(milliseconds: 1),
-                            curve: Curves.easeInOut);
-                      }
-                    });
+      if (MyPage_Controller.pageController!.hasClients) {
+        MyPage_Controller.pageController!.animateToPage(0,
+            duration: Duration(milliseconds: 1), curve: Curves.easeInOut);
+      }
+    });
     return false;
   }
 
   _runData() async {
-    var id  = await Prefs.Load();
+    var id = await Prefs.Load();
     setState(() => isLoading = true);
     var user_data = MyUser.FromJson((await DataService.getData()));
-    var user = MyUser(    
-        user_data.id,  
-        user_data.user_image,
-        user_data.name,
-        user_data.userName,
-        user_data.bio,
-        user_data.posts,
-        user_data.followers,
-        user_data.following);
-    Hive_db.set(id, user.Tojson());
+
     initi_filds();
 
     setState(() => isLoading = false);
@@ -131,20 +120,26 @@ class _MyProfilePageState extends State<MyProfilePage> {
         child: Scaffold(
             appBar: AppBar(
               elevation: 0.0,
-              backgroundColor: isLoading? Colors.black.withOpacity(.3): Colors.white,
+              backgroundColor:
+                  isLoading ? Colors.black.withOpacity(.3) : Colors.white,
               leadingWidth: 1,
               title: GestureDetector(
                 onTap: () {
-                  if(!isLoading)
-                  print("object");
+                  if (!isLoading) print("object");
                   //
                 },
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      userName,
-                      style: TextStyle(color: Colors.black),
+                      userName.length > 22
+                          ? userName.substring(1, 20) + "..."
+                          : userName,
+                      style: TextStyle(
+                        color: Colors.black,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 5),
                     Icon(
@@ -159,10 +154,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     height: 26, width: 26),
                 SizedBox(width: 15),
                 GestureDetector(
-                  
                   onTap: () {
-                     if(!isLoading)
-                    ProfileMenuSheet.show(context, widget.settting_control);
+                    if (!isLoading)
+                      ProfileMenuSheet.show(context, widget.settting_control);
                   },
                   child: SvgPicture.asset('assets/images/SVGs/new_menu.svg',
                       height: 35, width: 35),
@@ -178,7 +172,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     decoration: BoxDecoration(
                         border: Border.symmetric(
                             horizontal:
-                                BorderSide(color: Colors.black, width: .5))),
+                                BorderSide(color: Colors.grey, width: .5))),
                     child: Column(
                       children: [
                         // user post, followers, following
@@ -199,7 +193,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           if (info != null) {
                             _runData();
                           }
-
                           setState(() {});
                         }, () {
                           setState(() {});
@@ -233,7 +226,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                       ),
                                       Container(
                                         width: size.width,
-                                        height: size.height * .28,
+                                        height: size.height * .30,
                                         child: ListView.separated(
                                             scrollDirection: Axis.horizontal,
                                             itemBuilder: (con, i) => Row(
@@ -243,9 +236,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                                         : SizedBox.shrink(),
                                                     DiscoverPeople.build(
                                                         Size(size.width * .38,
-                                                            size.height * .28),
+                                                            size.height * .30),
                                                         null,
-                                                        "Rahimjon Mirkmkm",
+                                                        "rRahimjon Mirkmkm",
                                                         [
                                                           "Nuriddin Jorayev15 Nuriddin Jorayev"
                                                         ],
@@ -316,7 +309,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           height: size.height / 2,
                           width: size.width,
                           child: TabBarView(children: [
-                            _grid_builder(tempImageList),
+                            posts.isNotEmpty
+                                ? _grid_builder(posts)
+                                : Text('No data'),
                             Text("data2"),
                             Text("data3"),
                           ]),
@@ -446,25 +441,53 @@ class _MyProfilePageState extends State<MyProfilePage> {
       );
 
   // ignore: unused_element
-  Widget _grid_builder(List l) {
+  Widget _grid_builder(List<Post> l) {
+    print(l);
+
     return GridView.count(
       crossAxisCount: 4,
       mainAxisSpacing: 1,
       crossAxisSpacing: 1,
-      children: l.map((e) => _items_of_grid(e)).toList(),
+      padding: EdgeInsets.only(top: 2),
+      children: l.map((e) => _items_of_grid(e.post_images)).toList(),
     );
   }
 
   // items of grid
-  Widget _items_of_grid(url) => CachedNetworkImage(
-      height: 100,
-      filterQuality: FilterQuality.low,
-      fit: BoxFit.fill,
-      placeholder: (con, i) => Container(
-            color: Colors.grey[200],
-            child: Text(""),
+  Widget _items_of_grid(List url) =>
+      url.isNotEmpty && !url.first.toString().contains(".mp4")
+          ? CachedNetworkImage(
+              height: 100,
+              filterQuality: FilterQuality.low,
+              fit: BoxFit.fill,
+              placeholder: (con, i) => Container(
+                    color: Colors.grey[200],
+                    child: Text(""),
+                  ),
+              imageUrl: url[0])
+          : url.first.toString().contains(".mp4")
+              ? video_th(url.first)
+              : Container();
+
+  Widget video_th(url) {
+    print(url);
+    return FutureBuilder<Uint8List?>(
+      future: VideoThumbnail.thumbnailData(video: url),
+      builder: (con, snp) {
+        if (snp.hasData) {
+          return Image.memory(snp.data!, fit: BoxFit.cover);
+        }
+        return Container(
+          decoration:
+              BoxDecoration(border: Border.all(color: Colors.grey, width: 1)),
+          child: AnimatedShimmer(
+            height: 10,
+            width: 120,
           ),
-      imageUrl: url);
+        );
+      },
+    );
+  }
 
   Widget svg_viewer(String url) =>
       SvgPicture.asset(url, height: 20, width: 20, color: Colors.black);

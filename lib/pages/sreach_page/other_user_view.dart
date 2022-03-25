@@ -1,35 +1,36 @@
-
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_myinsta/functions/temp_data%20.dart';
 import 'package:flutter_myinsta/models/myUser.dart';
+import 'package:flutter_myinsta/models/post.dart';
 import 'package:flutter_myinsta/widgets/profile_widgets/users_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class OtherUserview extends StatefulWidget {
   final PageController pageController;
-  
-  const OtherUserview({Key? key, required this.pageController,}) : super(key: key);
+
+  const OtherUserview({
+    Key? key,
+    required this.pageController,
+  }) : super(key: key);
 
   @override
   _OtherUserviewState createState() => _OtherUserviewState();
 }
 
-class _OtherUserviewState extends State<OtherUserview>  {
-
-   MyUser? user;
+class _OtherUserviewState extends State<OtherUserview> {
+  MyUser? user;
   var key1 = GlobalKey();
   var key2 = GlobalKey();
   var key3 = GlobalKey();
-  var temp_grid_list = [];
+  List<Post> temp_grid_list = [];
   bool isappbar = false;
   bool isfriend = false;
   bool istoped = true;
-  int  toped = 0;
-  int  lastposition = 0;
+  int toped = 0;
+  int lastposition = 0;
 
   var s_control = ScrollController();
   var s_control2 = ScrollController();
@@ -54,42 +55,40 @@ class _OtherUserviewState extends State<OtherUserview>  {
   @override
   void initState() {
     super.initState();
-
-
     setState(() {
-      user  = Temp_data.user;
+      user = Temp_data.user;
+      temp_grid_list = user!.posts;
+      print("all post = ${temp_grid_list.length}");
     });
 
     s_control.addListener(() {
       print(s_control.offset);
-      if(s_control.offset.toInt() < -2){
+      if (s_control.offset.toInt() < -2) {
         setState(() {
-           s_control.animateTo(0.0, duration: Duration(microseconds: 100), curve: Curves.linear);
+          s_control.animateTo(0.0,
+              duration: Duration(microseconds: 100), curve: Curves.linear);
         });
       }
-    
-        
-          if(s_control.offset.toInt() <= 0){
-         
-           if(toped == 2 || lastposition == 0){
-              loading_prosses();       
 
-           }else{
-          s_control.animateTo(0.0, duration: Duration(microseconds: 100), curve: Curves.linear);
+      if (s_control.offset.toInt() <= 0) {
+        if (toped == 2 || lastposition == 0) {
+          loading_prosses();
+        } else {
+          s_control.animateTo(0.0,
+              duration: Duration(microseconds: 100), curve: Curves.linear);
           setState(() {
-             istoped = false;
+            istoped = false;
           });
-          setState(() {            
-          istoped = true;
-          toped++;
-          });
-        }        
-        
-        }else{
           setState(() {
-            lastposition = 1;
+            istoped = true;
+            toped++;
           });
         }
+      } else {
+        setState(() {
+          lastposition = 1;
+        });
+      }
       var i = (isfriend
                   ? key1.currentContext!.size!.height
                   : 0.0 + key2.currentContext!.size!.height)
@@ -124,23 +123,20 @@ class _OtherUserviewState extends State<OtherUserview>  {
       });
     });
   }
-  
 
   Future loading_prosses() async {
     setState(() => isloading = true);
     await Future.delayed(Duration(seconds: 3));
-    setState(()  {
+    setState(() {
       isloading = false;
-     toped = 0;
-     lastposition = s_control.offset.toInt();
-      });
-   
+      toped = 0;
+      lastposition = s_control.offset.toInt();
+    });
   }
- 
 
   go_page(int i) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      if (widget.pageController.hasClients) {           
+      if (widget.pageController.hasClients) {
         widget.pageController.animateToPage(i,
             duration: Duration(milliseconds: 1), curve: Curves.linear);
       }
@@ -149,7 +145,6 @@ class _OtherUserviewState extends State<OtherUserview>  {
 
   @override
   Widget build(BuildContext context) {
-    
     var allsize = MediaQuery.of(context).size;
     var appbar_h = AppBar().preferredSize.height;
     var statusbar_h = MediaQuery.of(context).viewPadding.top;
@@ -167,7 +162,7 @@ class _OtherUserviewState extends State<OtherUserview>  {
               icon: Icon(AntDesign.arrowleft, color: Colors.black),
             ),
             title: Text(user!.userName,
-              // widget.username,
+                // widget.username,
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 22,
@@ -187,11 +182,12 @@ class _OtherUserviewState extends State<OtherUserview>  {
                 : null),
         body: Stack(
           children: [
-            SingleChildScrollView(              
+            SingleChildScrollView(
               controller: s_control,
-              physics: istoped? BouncingScrollPhysics(
-                  parent: ClampingScrollPhysics()) : NeverScrollableScrollPhysics(),
-                  dragStartBehavior: DragStartBehavior.start,
+              physics: istoped
+                  ? BouncingScrollPhysics(parent: ClampingScrollPhysics())
+                  : NeverScrollableScrollPhysics(),
+              dragStartBehavior: DragStartBehavior.start,
               child: Container(
                 height: allsize.height + (allsize.height - 106),
                 width: allsize.width,
@@ -204,8 +200,8 @@ class _OtherUserviewState extends State<OtherUserview>  {
                           user!.user_image,
                           user!.name,
                           user!.bio,
-                         user!.posts.length.toString() ,
-                         user!.followers.toString(),
+                          user!.posts.length.toString(),
+                          user!.followers.toString(),
                           user!.following.toString()),
                     ),
                     SizedBox(height: 5),
@@ -218,7 +214,7 @@ class _OtherUserviewState extends State<OtherUserview>  {
                             height: allsize.height * .31,
                             width: allsize.width,
                             child: Column(
-                              children: [                                
+                              children: [
                                 Container(
                                   margin: EdgeInsets.symmetric(
                                       horizontal: 15, vertical: 10),
@@ -287,17 +283,22 @@ class _OtherUserviewState extends State<OtherUserview>  {
                                 allsize.height - (appbar_h + statusbar_h + 48),
                             color: Colors.white,
                             margin: EdgeInsets.only(top: 2.5),
-                            child: temp_grid_list.isNotEmpty? GridView.count(
-                              controller: s_control2,
-                              physics: scrollPhysics,
-                              crossAxisCount: 3,
-                              mainAxisSpacing: 1.5,
-                              crossAxisSpacing: 1.5,
-                              children: temp_grid_list.map((e) => _item_of_grid_view(e)).toList(),
-                             ) : Container(
-                               alignment: Alignment.topCenter,
-                               child: Text("no data"),)
-                            ),
+                            child: temp_grid_list.isNotEmpty
+                                ? GridView.count(
+                                    controller: s_control2,
+                                    physics: scrollPhysics,
+                                    crossAxisCount: 3,
+                                    mainAxisSpacing: 1.5,
+                                    crossAxisSpacing: 1.5,
+                                    children: temp_grid_list
+                                        .map((e) =>
+                                            _item_of_grid_view(e.post_images))
+                                        .toList(),
+                                  )
+                                : Container(
+                                    alignment: Alignment.topCenter,
+                                    child: Text("no data"),
+                                  )),
                         Container(color: Colors.amber),
                         Container(color: Colors.deepOrange),
                       ]),
@@ -464,12 +465,17 @@ class _OtherUserviewState extends State<OtherUserview>  {
         ),
       );
 
-  Widget _item_of_grid_view(url) => Container(
+  Widget _item_of_grid_view(List url) {
+    bool is_img = !url[0].toString().contains(".mp4");
+
+    if (is_img)
+      return Container(
         decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(url),
-            fit: BoxFit.fill
-          )
-        ),
+            image:
+                DecorationImage(image: NetworkImage(url[0]), fit: BoxFit.fill)),
       );
+    return Container(
+      color: Colors.grey,
+    );
+  }
 }

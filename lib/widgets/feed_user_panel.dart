@@ -29,11 +29,18 @@ class MyFeedUserPanel extends StatelessWidget {
               children: [
                 Text(title,
                     style: TextStyle(
-                        color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: .5)),
-                SizedBox(height: 2.0),
-                Text(subtitle,
-                    style: TextStyle(
-                        color: Colors.black54, fontSize: 14, fontWeight: FontWeight.normal))
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: .5)),
+                subtitle.isNotEmpty ? SizedBox(height: 2.0) : SizedBox.shrink(),
+                subtitle.isNotEmpty
+                    ? Text(subtitle,
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal))
+                    : SizedBox.shrink()
               ],
             ),
           ),
@@ -61,18 +68,15 @@ class MyFeedUserPanel extends StatelessWidget {
 
   Widget _circleAvatar(String url) => CachedNetworkImage(
         imageUrl: url,
-        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+        placeholder: (context, url) =>
+            Center(child: CircularProgressIndicator()),
         errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-        imageBuilder: (con, imageProvider) =>Container(
+        imageBuilder: (con, imageProvider) => Container(
           height: 35,
           width: 35,
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              image: imageProvider,
-              fit: BoxFit.cover
-            )
-          ),
+              shape: BoxShape.circle,
+              image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
         ),
       );
 }

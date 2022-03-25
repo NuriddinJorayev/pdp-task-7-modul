@@ -1,19 +1,25 @@
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_myinsta/models/myUser.dart';
 import 'package:flutter_myinsta/models/post.dart';
-import 'package:flutter_myinsta/models/temp.dart';
+import 'package:flutter_myinsta/pages/video_opener.dart';
+import 'package:flutter_myinsta/services/data_service.dart';
+import 'package:flutter_myinsta/services/share_prefs.dart';
 import 'package:flutter_myinsta/widgets/feed_user_panel.dart';
 import 'package:flutter_myinsta/widgets/my_rich_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_like_button/insta_like_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:video_player/video_player.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class MyFeedPage extends StatefulWidget {
-
   const MyFeedPage({Key? key}) : super(key: key);
 
   @override
@@ -22,49 +28,36 @@ class MyFeedPage extends StatefulWidget {
 
 class _MyFeedPageState extends State<MyFeedPage> {
   Size? mediaquery_size;
- 
+  var main_page_control = ScrollController();
+
   String img1 =
       "https://www.perma-horti.com/wp-content/uploads/2019/02/image-2.jpg";
   String img2 = "https://ychef.files.bbci.co.uk/976x549/p0738j5f.jpg";
 
-  List<Post> All_posts = [
-    Post([
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVC4vdx30EZy4eGVRvk0WD4XF8tYtYq676VwR7R63NGBpFRtcbIOPFqk0RCOmAhLkYpjM&usqp=CAU",
-      "https://media.defense.gov/2013/Aug/12/2000705252/-1/-1/0/190413-A-YG824-002.JPG",
-      "https://ychef.files.bbci.co.uk/976x549/p0738j5f.jpg",
-      "https://www.perma-horti.com/wp-content/uploads/2019/02/image-2.jpg",
-      "https://ychef.files.bbci.co.uk/976x549/p0738j5f.jpg",
-      "https://www.perma-horti.com/wp-content/uploads/2019/02/image-2.jpg",
-      "https://ychef.files.bbci.co.uk/976x549/p0738j5f.jpg",
-      "https://www.perma-horti.com/wp-content/uploads/2019/02/image-2.jpg",
-      "https://ychef.files.bbci.co.uk/976x549/p0738j5f.jpg",
-    ],
-        "this day new day today this day new day today this day new day todaythis day new day todaythis day new day today",
-        "102",
-        true,
-        "2020.01.10",
-        "https://ychef.files.bbci.co.uk/976x549/p0738j5f.jpg",
-        "FullName"),
-    Post([
-      "https://www.esafety.gov.au/sites/default/files/2019-08/Remove%20images%20and%20video.jpg",
-      'https://img-19.ccm2.net/cI8qqj-finfDcmx6jMK6Vr-krEw=/1500x/smart/b829396acc244fd484c5ddcdcb2b08f3/ccmcms-commentcamarche/20494859.jpg',
-      "https://www.perma-horti.com/wp-content/uploads/2019/02/image-2.jpg"
-    ],
-        "this day this day new day today this day new day today this day new day todaythis day new day todaythis day new day today @new day today",
-        "1123",
-        false,
-        "2020.02.10",
-        "https://ychef.files.bbci.co.uk/976x549/p0738j5f.jpg",
-        "UserName"),
-  ];
+  List<Post> All_posts = [];
+  var MyUserid;
+
   @override
   void initState() {
+    up_load();
+    getMyId();
     super.initState();
-    
-    if (Temp.p != null) {
-      All_posts.add(Temp.p!);
-      Temp.p = null;
-    }
+    print(All_posts.length);
+    main_page_control.addListener(() {
+      setState(() {});
+    });
+  }
+
+  up_load() async {
+    var map = await await DataService.getData("all Users Posts");
+    setState(() {
+      for (var e in map["allPosts"]) {
+        print(Post.fromjson(e).user_name);
+        All_posts.add(Post.fromjson(e));
+      }
+      //  All_posts = List<Post>.from(map["allPosts"].map((e)=> Post.fromjson(e)));
+    });
+    print(All_posts.length);
   }
 
   @override
@@ -78,16 +71,16 @@ class _MyFeedPageState extends State<MyFeedPage> {
           leadingWidth: 0,
           title: Row(
             children: [
-              Text("Home",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 30)),
-                      Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black,)
+              Text("Home", style: TextStyle(color: Colors.black, fontSize: 30)),
+              Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: Colors.black,
+              )
             ],
           ),
           actions: [
             GestureDetector(
-              onTap: ()async{
+              onTap: () async {
                 // DataService.SetNewData();
                 print("cloud data");
                 // DataService.Updata("Nurik nima gaplar yana o'zingda");
@@ -96,23 +89,23 @@ class _MyFeedPageState extends State<MyFeedPage> {
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: SvgPicture.asset("assets/images/SVGs/icons8-facebook-messenger(1).svg",
-                 height: 30,
-                width: 30
-                  ),
+                child: SvgPicture.asset(
+                    "assets/images/SVGs/icons8-facebook-messenger(1).svg",
+                    height: 30,
+                    width: 30),
               ),
             ),
-                     ],
-                     
+          ],
         ),
         body: Container(
           height: allsize.height,
           width: allsize.width,
           child: ListView.builder(
+              controller: main_page_control,
               itemCount: All_posts.length,
               itemBuilder: (BuildContext con, int index) {
                 // ignore: unnecessary_null_comparison
-                if (All_posts[index].image_url != null) {
+                if (All_posts[index].post_images != null) {
                   return post_items_builder(All_posts[index]);
                 }
                 return SizedBox.shrink();
@@ -132,33 +125,45 @@ class _MyFeedPageState extends State<MyFeedPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             MyFeedUserPanel(
-              title: "Username",
-              subtitle: "2020-01-20",
+              title: p.user_name,
+              subtitle: p.location,
               user_image: p.user_image,
             ),
             // base image
-            p.image_url.length == 1
-                ? CachedNetworkImage(
-                    width: MediaQuery.of(context).size.width,
-                    imageUrl: p.image_url[0],
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) =>
-                        Center(child: Icon(Icons.error)),
-                    imageBuilder: (con, _image_provider) => InstaLikeButton(
+            p.post_images.length == 1
+                ? p.post_images[0].toString().checkURL()
+                    ? video_Builder(p.post_images[0], p)
+                    : CachedNetworkImage(
                         width: MediaQuery.of(context).size.width,
-                        image: _image_provider,
-                        imageBoxfit: BoxFit.cover,
-                        iconSize: 100,
-                        onChanged: () {
-                          setState(() {
-                            if (!p.isliked) {
-                              p.isliked = true;
-                              p.likes = (int.parse(p.likes) + 1).toString();
-                            }
-                          });
-                        }))
+                        imageUrl: p.post_images[0],
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) =>
+                            Center(child: Icon(Icons.error)),
+                        imageBuilder: (con, _image_provider) => InstaLikeButton(
+                            width: MediaQuery.of(context).size.width,
+                            image: _image_provider,
+                            imageBoxfit: BoxFit.cover,
+                            iconSize: 100,
+                            onChanged: () async {
+                              var myuser =
+                                  MyUser.FromJson(await DataService.getData());
+                              var id = await Prefs.Load();
+                              bool isliked = false;
+                              for (var item in p.likes) {
+                                if (item.id == id) {
+                                  isliked = true;
+                                }
+                              }
+                              setState(() {
+                                if (!isliked) {
+                                  p.likes.add(myuser);
+                                }
+                              });
+                              print(p.userId);
+                              DataService.Updata_post(p.ToJson());
+                            }))
                 : Container(
                     width: MediaQuery.of(context).size.width,
                     height: image_size,
@@ -169,11 +174,11 @@ class _MyFeedPageState extends State<MyFeedPage> {
                           image_avtive_index = i;
                         });
                       },
-                      itemCount: p.image_url.length,
+                      itemCount: p.post_images.length,
                       itemBuilder: (con, int index) {
                         return CachedNetworkImage(
                             width: MediaQuery.of(context).size.width,
-                            imageUrl: p.image_url[index],
+                            imageUrl: p.post_images[index],
                             fit: BoxFit.cover,
                             placeholder: (context, url) =>
                                 Center(child: CircularProgressIndicator()),
@@ -185,14 +190,24 @@ class _MyFeedPageState extends State<MyFeedPage> {
                                     image: _image_provider,
                                     imageBoxfit: BoxFit.cover,
                                     iconSize: 100,
-                                    onChanged: () {
+                                    onChanged: () async {
+                                      print("aaaaaaaa");
+                                      var myuser = MyUser.FromJson(
+                                          await DataService.getData());
+                                      var id = await Prefs.Load();
+                                      bool isliked = false;
+                                      for (var item in p.likes) {
+                                        if (item.id == id) {
+                                          isliked = true;
+                                        }
+                                      }
                                       setState(() {
-                                        if (!p.isliked) {
-                                          p.isliked = true;
-                                          p.likes = (int.parse(p.likes) + 1)
-                                              .toString();
+                                        if (!isliked) {
+                                          p.likes.add(myuser);
                                         }
                                       });
+                                      print(p.userId);
+                                      DataService.Updata_post(p.ToJson());
                                     }));
                       },
                     ),
@@ -208,21 +223,38 @@ class _MyFeedPageState extends State<MyFeedPage> {
                       children: [
                         // like button
                         InkResponse(
-                          onTap: () {     
-                          
+                          onTap: () async {
+                            var myuser =
+                                MyUser.FromJson(await DataService.getData());
+                            var id = await Prefs.Load();
+                            bool isliked = false;
+                            for (var item in p.likes) {
+                              if (item.id == id) {
+                                isliked = true;
+                              }
+                            }
+
                             setState(() {
-                              if (p.isliked) {
-                                p.isliked = false;
-                                p.likes = (int.parse(p.likes) - 1).toString();
+                              if (!isliked) {
+                                p.likes.add(myuser);
                               } else {
-                                p.isliked = true;
-                                p.likes = (int.parse(p.likes) + 1).toString();
+                                int i = -1;
+                                for (var item in p.likes) {
+                                  i++;
+                                  if (item.id == id) {
+                                    p.likes.removeAt(i);
+                                    break;
+                                  }
+                                }
                               }
                             });
+
+                            print(p.userId);
+                            DataService.Updata_post(p.ToJson());
                           },
                           child: AnimatedContainer(
                             duration: Duration(milliseconds: 500),
-                            child: p.isliked
+                            child: isLiked_Or_DisLiked(p.likes, MyUserid)
                                 ? Icon(FontAwesome.heart,
                                     size: 23.0, color: Colors.red)
                                 : Icon(Feather.heart, size: 23.0),
@@ -230,11 +262,13 @@ class _MyFeedPageState extends State<MyFeedPage> {
                         ),
 
                         SizedBox(width: 15.0),
-                        
-                        Image.asset("assets/images/bubble-chat(1).png",
-                        height: 24,
-                        width: 24,
-                         fit: BoxFit.cover,),
+
+                        Image.asset(
+                          "assets/images/bubble-chat(1).png",
+                          height: 24,
+                          width: 24,
+                          fit: BoxFit.cover,
+                        ),
                         SizedBox(width: 15.0),
                         Transform.rotate(
                           angle: 3.14 / 10,
@@ -244,23 +278,25 @@ class _MyFeedPageState extends State<MyFeedPage> {
                     ),
                   ),
                   // image  indecator
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: AnimatedSmoothIndicator(
-                        activeIndex: image_avtive_index,
-                        count: p.image_url.length,
-                        effect: ScrollingDotsEffect(
-                          dotColor: Colors.grey[600]!,
-                          activeDotColor: Colors.blue[600]!,
-                          spacing: 5.0,
-                          dotHeight: 6,
-                          dotWidth: 6,
-                          maxVisibleDots: 5,
-                        ),
-                      ),
-                    ),
-                  ),
+                  p.post_images.length > 1
+                      ? Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: AnimatedSmoothIndicator(
+                              activeIndex: image_avtive_index,
+                              count: p.post_images.length,
+                              effect: ScrollingDotsEffect(
+                                dotColor: Colors.grey[600]!,
+                                activeDotColor: Colors.blue[600]!,
+                                spacing: 5.0,
+                                dotHeight: 6,
+                                dotWidth: 6,
+                                maxVisibleDots: 5,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
                   Expanded(
                     child: Container(
                         alignment: Alignment.centerRight,
@@ -276,29 +312,191 @@ class _MyFeedPageState extends State<MyFeedPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "${p.likes} likes",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17),
-                  ),
+                  p.likes.length != 0
+                      ? Text(
+                          "${p.likes.length} likes",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17),
+                        )
+                      : SizedBox.shrink(),
                   SizedBox(height: 5.0),
-                  MyRichText(text: p.caption)
+                  MyRichText(
+                    text: (p.user_name + " " + p.caption),
+                    userName: p.user_name,
+                  )
                 ],
               ),
             ),
             SizedBox(height: 10.0),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text("13 hours age",
+
+              // need a time Accountent class
+
+              child: Text(p.time,
                   style: TextStyle(color: Colors.grey, fontSize: 14)),
             ),
             SizedBox(height: 15.0),
           ],
         ),
       );
-   
-  
 
+  getMyId() async {
+    MyUserid = await Prefs.Load().then((value) => value);
+  }
+
+  bool isLiked_Or_DisLiked(List<MyUser> user, id) {
+    for (var u in user) {
+      if (id == u.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  String lastURL = "";
+
+  Widget video_Builder(String url, Post p) {
+    return Container(
+        height: 250,
+        width: MediaQuery.of(context).size.width,
+        child: Video_wid(url: url, p: p));
+  }
+}
+
+class Video_wid extends StatefulWidget {
+  final String url;
+  final Post p;
+  Video_wid({Key? key, required this.url, required this.p}) : super(key: key);
+
+  @override
+  _Video_widState createState() => _Video_widState();
+}
+
+class _Video_widState extends State<Video_wid> {
+  VideoPlayerController? main_con;
+  bool isBuffering = false;
+  bool isInitialized = false;
+  bool isNoice = false;
+
+  @override
+  void initState() {
+    super.initState();
+    main_con = VideoPlayerController.network(
+      widget.url,
+    )..initialize();
+    main_con!.play();
+
+    main_con?.setLooping(true);
+    main_con?.addListener(() {
+      setState(() {
+        isBuffering = main_con!.value.isBuffering;
+        isInitialized = main_con!.value.isInitialized;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    main_con!.dispose();
+    main_con = null;
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return VisibilityDetector(
+      key: Key("mykey"),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => Feed_Video(
+                      likes: widget.p.likes.length.toString(),
+                      comments: widget.p.comments,
+                      user_image: widget.p.user_image,
+                      appbar_title: "Reels",
+                      user_name: widget.p.user_name,
+                      video_url: widget.url,
+                      caption: widget.p.caption)));
+        },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            !isBuffering && isInitialized
+                ? VideoPlayer(main_con!)
+                : FutureBuilder<Uint8List?>(
+                    future: VideoThumbnail.thumbnailData(video: widget.url),
+                    builder: (con, snp) {
+                      if (snp.hasData) {
+                        return Image.memory(snp.data!);
+                      }
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  ),
+            Container(
+              alignment: Alignment.bottomRight,
+              padding: EdgeInsets.all(10),
+              child: GestureDetector(
+                onTap: Volume_con,
+                child: Container(
+                  height: 30,
+                  width: 30,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                        Colors.black.withOpacity(.5),
+                        Colors.black.withOpacity(.5),
+                      ]),
+                      shape: BoxShape.circle),
+                  child: Icon(
+                    isNoice ? Icons.volume_up : Icons.volume_off,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              alignment: Alignment.topRight,
+              padding: EdgeInsets.all(15),
+              child: Image.asset(
+                "assets/images/reels.png",
+                height: 26,
+                width: 26,
+                fit: BoxFit.fill,
+              ),
+            )
+          ],
+        ),
+      ),
+      onVisibilityChanged: (info) {
+        if (main_con != null) {
+          if (info.visibleFraction > .5) {
+            main_con!.play();
+          } else {
+            main_con!.pause();
+          }
+        }
+      },
+    );
+  }
+
+  Volume_con() {
+    setState(() {
+      isNoice = !isNoice;
+    });
+    main_con!.setVolume(isNoice ? 1 : 0);
+  }
+}
+
+extension checkURLtoVideo on String {
+  bool checkURL() {
+    return this.toLowerCase().contains(".mp4");
+  }
 }

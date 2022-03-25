@@ -33,8 +33,9 @@ class _ChangeProfilePhotoState extends State<ChangeProfilePhoto> {
     super.initState();
     // camera_initialize();
     setState(() {
-    try { selected_image = File(images_url[0]); } catch(e){}  
-
+      try {
+        selected_image = File(images_url[0]);
+      } catch (e) {}
     });
   }
 
@@ -75,9 +76,12 @@ class _ChangeProfilePhotoState extends State<ChangeProfilePhoto> {
                   // ignore: unused_local_variable
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => Image_effect_page(
-                          image_file: selected_image!,
+                          image_file: [selected_image!],
                           isRound: true,
-                          nextbutton: () {
+                          nextbutton: (f) {
+                            setState(() {
+                              isLoading = true;
+                            });
                             nextButton(context);
                           })));
                 },
@@ -106,7 +110,7 @@ class _ChangeProfilePhotoState extends State<ChangeProfilePhoto> {
                             color: Colors.grey,
                             image: DecorationImage(
                                 image: FileImage(selected_image!),
-                                fit: BoxFit.fill),
+                                fit: BoxFit.cover),
                           )
                         : BoxDecoration(color: Colors.white),
                     child: Container(
@@ -176,9 +180,12 @@ class _ChangeProfilePhotoState extends State<ChangeProfilePhoto> {
     );
   }
 
-  nextButton(BuildContext context1) async {       
-    var url = await FileService.SetImage(File(selected_image!.path));
-    Navigator.pop( context);
+  nextButton(BuildContext context1) async {
+    var url = await FileService.SetImage(selected_image!);
+    setState(() {
+      isLoading = false;
+    });
+    Navigator.pop(context);
     Navigator.pop(context1, url);
   }
 
@@ -220,12 +227,11 @@ class CameraApp extends StatefulWidget {
 class _CameraAppState extends State<CameraApp> {
   late CameraController controller;
   int cameraIndex = 0;
-  String image_url = "";
+  File? image_url;
 
   @override
   void initState() {
     super.initState();
-   
 
     controller =
         CameraController(widget.cam[cameraIndex], ResolutionPreset.max);
@@ -257,8 +263,7 @@ class _CameraAppState extends State<CameraApp> {
   }
 
   // take photo
-   takePhoto(BuildContext context) async {
-
+  takePhoto(BuildContext context) async {
     final temp = await controller.takePicture();
     Directory d = Directory("/storage/emulated/0/Picture");
     int i = 0;
@@ -283,22 +288,22 @@ class _CameraAppState extends State<CameraApp> {
       }
     }
     setState(() {
-      image_url = f!.path;
+      image_url = f!;
     });
 
     PagePush.Push(
         context,
         Image_effect_page(
-          image_file: f!,
+          image_file: [f!],
           isRound: true,
-          nextbutton: () {
+          nextbutton: (f) {
             nextButton(context);
           },
         ));
   }
 
-  nextButton(BuildContext context1) async {   
-    var url = await FileService.SetImage(File(image_url));
+  nextButton(BuildContext context1) async {
+    var url = await FileService.SetImage(image_url!);
     Navigator.pop(context);
     Navigator.pop(context1, url);
   }

@@ -9,24 +9,25 @@ import 'package:flutter_myinsta/pages/home_paga.dart';
 import 'package:flutter_myinsta/pages/my_profile_page.dart';
 import 'package:flutter_myinsta/pages/signin_page.dart';
 import 'package:flutter_myinsta/pages/signup_page.dart';
+import 'package:flutter_myinsta/pages/video_opener.dart';
 import 'package:flutter_myinsta/services/share_prefs.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await Hive.initFlutter();
   await Hive.openBox("hive0");
-  await SharedPreferences.getInstance();  
+
+  await SharedPreferences.getInstance();
   await availableCameras();
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   var con_empty = PageController();
-   MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,24 +39,34 @@ class MyApp extends StatelessWidget {
       ),
       home: isSigned(),
       routes: {
-        SignInPage().id : (context) => SignInPage(),
-        SignUpPage().id : (context) => SignUpPage(),
-        GelleryPage().id : (context) => GelleryPage(),
-        MyProfilePage( settting_control: con_empty).id : (context) => MyProfilePage( settting_control: con_empty),
-        Home().id : (context) => Home(),
+        SignInPage().id: (context) => SignInPage(),
+        SignUpPage().id: (context) => SignUpPage(),
+        GelleryPage().id: (context) => GelleryPage(),
+        MyProfilePage(settting_control: con_empty).id: (context) =>
+            MyProfilePage(settting_control: con_empty),
+        Home().id: (context) => Home(),
       },
     );
   }
-  
-  Widget isSigned()=> StreamBuilder<User?>(
-    stream: FirebaseAuth.instance.authStateChanges(),
-    builder: (context, Snapshot) {
-        if (Snapshot.hasData) {
-          Prefs.Save(Snapshot.data!.uid);
-          return Home();
-        }
-        return SignInPage();
-      },
-    );
-  
+
+  Widget isSigned() => StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, Snapshot) {
+          if (Snapshot.hasData) {
+            Prefs.Save(Snapshot.data!.uid);
+            return Home();
+            // return Feed_Video(
+            //   appbar_title: "Reela",
+            //   likes: "152",
+            //   comments: [2, 1, 2, 3, 7],
+            //   user_image: "",
+            //   caption: 'caption',
+            //   user_name: '9beatz._',
+            //   video_url:
+            //       'https://cdn.videvo.net/videvo_files/video/free/2015-09/large_watermarked/guitar_on_fingers_stock_preview.mp4',
+            // );
+          }
+          return SignInPage();
+        },
+      );
 }

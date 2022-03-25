@@ -3,12 +3,14 @@
     <uses-permission android:name="android.permission.CAMERA" android:requestLegacyExternalStorage="true" />
     <uses-permission
      android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-     android:maxSdkVersion="18" />
+     />
+   
 
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACTION_MANAGE_ALL_FILES_PERMISSION"/>
    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+   <uses-permission android:name="android.permission.INTERNET"/>
 
     
     
@@ -16,14 +18,16 @@
    android:requestLegacyExternalStorage="true"
         android:label="flutter_myinsta"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"   >
         <activity
             android:name=".MainActivity"
             android:exported="true"
+           android:largeHeap="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
+            android:hardwareAccelerated="false"
             android:windowSoftInputMode="adjustResize">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user

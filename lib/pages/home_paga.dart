@@ -5,7 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_myinsta/functions/main_page_controller.dart';
 import 'package:flutter_myinsta/functions/page_control.dart';
 import 'package:flutter_myinsta/functions/page_opener_push.dart';
@@ -19,6 +18,7 @@ import 'package:flutter_myinsta/pages/my_profile_page.dart';
 import 'package:flutter_myinsta/pages/my_search_page.dart';
 import 'package:flutter_myinsta/pages/my_upload_page.dart';
 import 'package:flutter_myinsta/pages/profile_pages.dart/setting_page.dart';
+import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 
 class Home extends StatefulWidget {
   final String id = "home_page";
@@ -38,24 +38,21 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    initialize(); 
+    initialize();
     _check_permision();
 
-    
     MyPage_Controller.set(page_control);
     MyMain_page_control.set(main_page_control);
     scroll = ScrollPhysics();
   }
 
- Future<void> _check_permision ()async{
-   await MyPermission_status.Request_storage();
-   await MyPermission_status.Request_manageExternalStorage();
- }
-  
+  Future<void> _check_permision() async {
+    await MyPermission_status.Request_storage();
+    await MyPermission_status.Request_manageExternalStorage();
+  }
 
   var cam;
   initialize() async {
-    
     cam = await availableCameras();
     if (cam != null) {
       setState(() {});
@@ -143,8 +140,9 @@ class _HomeState extends State<Home> {
                   activeColor: Colors.black,
                   items: [
                     BottomNavigationBarItem(
-                        icon: Icon(MaterialCommunityIcons.home_outline)),
-                    BottomNavigationBarItem(icon: Icon(Icons.search)),
+                        icon: Icon(PhosphorIcons.house_fill)),
+                    BottomNavigationBarItem(
+                        icon: Icon(PhosphorIcons.magnifying_glass)),
                     BottomNavigationBarItem(icon: Icon(Icons.add_box_outlined)),
                     BottomNavigationBarItem(icon: Icon(Icons.favorite)),
                     BottomNavigationBarItem(icon: Icon(Icons.account_circle)),

@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_myinsta/models/myUser.dart';
@@ -26,7 +25,7 @@ class _SignUpPageState extends State<SignUpPage> {
   var p_control = TextEditingController();
   var f_control = TextEditingController();
   var c_control = TextEditingController();
-  bool isLoading  = false;
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     var allSize = MediaQuery.of(context).size;
@@ -44,7 +43,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Color.fromARGB(255, 252, 175, 69),
                 Color.fromARGB(255, 245, 96, 63),
               ])),
-          child:Stack(
+          child: Stack(
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -82,29 +81,47 @@ class _SignUpPageState extends State<SignUpPage> {
                         SizedBox(height: 10.0),
                         MyOutLineButoon(
                             onPressed: () {
-                             if(e_control.text.trim().isNotEmpty && p_control.text.trim().isNotEmpty &&
-                              f_control.text.trim().isNotEmpty && c_control.text.trim().isNotEmpty ) {
-                                if(p_control.text.trim().compareTo(c_control.text.trim())== 0){
+                              if (e_control.text.trim().isNotEmpty &&
+                                  p_control.text.trim().isNotEmpty &&
+                                  f_control.text.trim().isNotEmpty &&
+                                  c_control.text.trim().isNotEmpty) {
+                                if (p_control.text
+                                        .trim()
+                                        .compareTo(c_control.text.trim()) ==
+                                    0) {
                                   // do sing up function
-                                  if(p_control.text.trim().length >=8){
-                                    _doSignUp(e_control.text.trim(), p_control.text.trim());
-                                  }else{
-                                    FlutterToastWidget.build(context, "You must enter at least 8 characters", 4);
+                                  if (p_control.text.trim().length >= 8) {
+                                    _doSignUp(e_control.text.trim(),
+                                        p_control.text.trim());
+                                  } else {
+                                    FlutterToastWidget.build(
+                                        context,
+                                        "You must enter at least 8 characters",
+                                        4);
                                   }
                                 }
                                 //password with confirm password is not equal
-                                else{
-                                  FlutterToastWidget.build(context, "Confirm Password isn't equal Password", 4);
+                                else {
+                                  FlutterToastWidget.build(
+                                      context,
+                                      "Confirm Password isn't equal Password",
+                                      4);
                                 }
                               }
                               // same fileds is empty
-                              else{
-                                FlutterToastWidget.build(context, 
-                                f_control.text.trim().isEmpty ? "Fullname is empty" : 
-                                e_control.text.trim().isEmpty ? "Email is empty" : 
-                                p_control.text.trim().isEmpty ? "Password is empty" : 
-                                c_control.text.trim().isEmpty ? "Confirm Pasword is empty" : ""
-                                , 4);
+                              else {
+                                FlutterToastWidget.build(
+                                    context,
+                                    f_control.text.trim().isEmpty
+                                        ? "Fullname is empty"
+                                        : e_control.text.trim().isEmpty
+                                            ? "Email is empty"
+                                            : p_control.text.trim().isEmpty
+                                                ? "Password is empty"
+                                                : c_control.text.trim().isEmpty
+                                                    ? "Confirm Pasword is empty"
+                                                    : "",
+                                    4);
                               }
                             },
                             textname: "Sign Up")
@@ -119,7 +136,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   SizedBox(height: 20.0)
                 ],
               ),
-              isLoading? Center(child: CircularProgressIndicator(),) : SizedBox.shrink()
+              isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : SizedBox.shrink()
             ],
           ),
         ),
@@ -127,55 +148,59 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  _doSignUp(String email, String password) async{
-    var email_vaidation = RegExp(r"^[A-z0-9.A-z0-9.!$%&'*+-/=?^_`{|}~]+@(g|e|G|E)mail+\.[A-z]+").hasMatch(email);
-    var password_vaidation = RegExp(r"^(?=.*[0-9])(?=.*[A-Z])(?=.*[.!#$@%&'*+/=?^_`{|}~-]).{8,}$").hasMatch(password);
+  _doSignUp(String email, String password) async {
+    var email_vaidation =
+        RegExp(r"^[A-z0-9.A-z0-9.!$%&'*+-/=?^_`{|}~]+@(g|e|G|E)mail+\.[A-z]+")
+            .hasMatch(email);
+    var password_vaidation =
+        RegExp(r"^(?=.*[0-9])(?=.*[A-Z])(?=.*[.!#$@%&'*+/=?^_`{|}~-]).{8,}$")
+            .hasMatch(password);
     // ignore: unused_local_variable
-   
-        if(email_vaidation && password_vaidation){
-          setState(() {
-            isLoading = true;
-          });
 
-          AuthService.AuthSignUp(email, password).then((value) {
-            value.compareTo("The password provided is too weak")==0 ? {
-              FlutterToastWidget.build(context, "The password provided is too weak", 4)
-            } : 
-            value.compareTo("email-already-in-use")==0 ? {
-              FlutterToastWidget.build(context, "email-already-in-use", 4)
-            } : 
-             value.isNotEmpty? {            
-               local_data(),
-              FlutterToastWidget.build(context, "Successfully registered", 4),             
-              Navigator.of(context).pushReplacementNamed(Home().id)
-               
-             } : {
-              FlutterToastWidget.build(context, "something error", 4)
-             };
-            setState(() {
-            isLoading = false;
-          });
+    if (email_vaidation && password_vaidation) {
+      setState(() {
+        isLoading = true;
+      });
 
-          });
-        }else{
-          FlutterToastWidget.build(context, 
-          !email_vaidation ? "Check your Email, something get wrong" : 
-           "Check your Email password, samething get wrong", 4);
-        
-        }
-
-      
-  }
-  local_data()async{
-    try {
-       var userid = await FirebaseAuth.instance.currentUser;
-     await Prefs.Save(userid!.uid);
-    } catch (e) {
+      AuthService.AuthSignUp(email, password).then((value) {
+        value.compareTo("The password provided is too weak") == 0
+            ? {
+                FlutterToastWidget.build(
+                    context, "The password provided is too weak", 4)
+              }
+            : value.compareTo("email-already-in-use") == 0
+                ? {FlutterToastWidget.build(context, "email-already-in-use", 4)}
+                : value.isNotEmpty
+                    ? {
+                        local_data(),
+                        FlutterToastWidget.build(
+                            context, "Successfully registered", 4),
+                        Navigator.of(context).pushReplacementNamed(Home().id)
+                      }
+                    : {FlutterToastWidget.build(context, "something error", 4)};
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } else {
+      FlutterToastWidget.build(
+          context,
+          !email_vaidation
+              ? "Check your Email, something get wrong"
+              : "Check your Email password, samething get wrong",
+          4);
     }
+  }
+
+  local_data() async {
+    try {
+      var userid = await FirebaseAuth.instance.currentUser;
+      await Prefs.Save(userid!.uid);
+    } catch (e) {}
     var id = await Prefs.Load();
-     MyUser myUser = MyUser(id, "", f_control.text, "", "", [], 0, 0);
-     DataService.SetNewData(myUser.Tojson());
-              Hive_db.set(id, myUser.Tojson());
+    MyUser myUser = MyUser(id, "", f_control.text, "", "", [], 0, 0);
+    DataService.SetNewData(myUser.Tojson());
+    Hive_db.set(id, myUser.Tojson());
   }
 
   _signTextPress() {

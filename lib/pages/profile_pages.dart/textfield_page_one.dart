@@ -14,6 +14,7 @@ class TextfieldPageOne extends StatefulWidget {
 
 class _TextfieldPageOneState extends State<TextfieldPageOne> {
   var text_con = TextEditingController();
+    static const IconData tik_icon = IconData(0xe156, fontFamily: 'MaterialIcons');
 
   Future<bool> popscope()async{
     Navigator.pop(context);
@@ -50,8 +51,7 @@ class _TextfieldPageOneState extends State<TextfieldPageOne> {
               onPressed: () {
                  Navigator.pop(context, text_con.text.trim());
               },
-              icon: Icon(
-                IconData(0xe156, fontFamily: 'MaterialIcons'),
+              icon: Icon(tik_icon,
                 color: Colors.blue[600],
                 size: 30,
               ))

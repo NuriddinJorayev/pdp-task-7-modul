@@ -3,34 +3,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 class User_Widgets {
-
-  static Widget itemOfUser(username, name, String img_url, Function()press, [bool isOutline = false]) {
-    return GestureDetector(
-      onTap: press,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Row(
-          children: [
-            circle_image(img_url, isOutline),
-            SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(username, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                  Text(name, style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w400)),
-                ],
-              ),
+  static Widget itemOfUser(username, name, String img_url,
+      [bool isOutline = false]) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          circle_image(img_url, isOutline),
+          SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(username,
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                Text(name,
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400)),
+              ],
             ),
-            Icon(Feather.x, color: Colors.black, size: 12,)
-          ],
-        ),
+          ),
+          Icon(
+            Feather.x,
+            color: Colors.black,
+            size: 12,
+          )
+        ],
       ),
     );
   }
 
- static Widget circle_image(String img_url, [bool isOutline = false]) => Column(
+  static Widget circle_image(String img_url, [bool isOutline = false]) =>
+      Column(
         children: [
           Container(
             height: 60,
@@ -64,6 +72,4 @@ class User_Widgets {
           ),
         ],
       );
-
-  
 }

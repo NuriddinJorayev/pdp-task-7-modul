@@ -53,25 +53,26 @@ class DiscoverPeople {
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 16,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: .7),
                       overflow: TextOverflow.ellipsis,
                       softWrap: false)),
               // "Followed by" text
               SizedBox(height: 4),
-              Text(followdBy.isNotEmpty ? "Followed by" : "Follows you",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: .7)),
-              // followed by
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Text(followdBy.join(''),
+              Flexible(
+                child: Text(followdBy.isNotEmpty ? "Followed by" : "Follows you",
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: .7)),
+              ),
+              // followed by
+              Flexible(
+                child: Text(followdBy.join(''),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
                         fontWeight: FontWeight.w400,
                         letterSpacing: .7),
                     overflow: TextOverflow.ellipsis,
@@ -81,7 +82,10 @@ class DiscoverPeople {
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [_follow_buttton(isfollowd, follow_button)],
+                children: [
+                  _follow_buttton(isfollowd, follow_button), 
+                  SizedBox(height: 10)
+                ],
               )
             ],
           )

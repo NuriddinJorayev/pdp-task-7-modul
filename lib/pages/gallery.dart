@@ -8,9 +8,11 @@ import 'package:flutter_myinsta/functions/page_opener_push.dart';
 import 'package:flutter_myinsta/models/image_loader.dart';
 import 'package:flutter_myinsta/pages/new_post_pages/image_effect_page.dart';
 import 'package:flutter_myinsta/pages/new_post_pages/last_post_page.dart';
+import 'package:flutter_myinsta/utils/bitmap_image.dart';
 import 'package:flutter_myinsta/widgets/gallery_button.dart';
 import 'package:flutter_myinsta/widgets/gallery_image.dart';
 import 'package:flutter_myinsta/widgets/sheets/gallry_button_sheet.dart';
+import 'package:native_video_view/native_video_view.dart';
 
 class GelleryPage extends StatefulWidget {
   final String id = "home_page";
@@ -24,27 +26,60 @@ class GelleryPage extends StatefulWidget {
 }
 
 class _GelleryPageState extends State<GelleryPage> {
+  var single_con = ScrollController();
   double index_test = 0.0;
-  List<List<String>> all_Images_url = [];
+  List<String> all_Images_url = [];
   bool select_able = false;
   List<bool> select_image = [];
   List<int> select_count = [];
-  File? file_image;
+  List<File>? file_image;
+  List<File>? temp_file_image;
+  int ini = 0;
+  // ignore: unused_field
 
   @override
   void initState() {
     super.initState();
-    all_Images_url = MyImage_Video_taker.RunAndLoad();
+    setState(() {
+      for (var e in MyImage_Video_taker.RunAndLoad()[0]) {
+        all_Images_url.add(e);
+      }
+      for (var e in MyImage_Video_taker.RunAndLoad()[1]) {
+        all_Images_url.add(e);
+      }
+    });
     // ignore: unused_local_variable
-    for (var e in all_Images_url[0]) {
+    for (var e in all_Images_url) {
       select_image.add(false);
       select_count.add(0);
     }
     if (select_image.isNotEmpty) {
       setState(() {
-        file_image = File(all_Images_url[0][0]);
+        file_image = [File(all_Images_url[0])];
       });
     }
+
+    single_con.addListener(() {
+      if (single_con.hasClients) {
+        if (ini > single_con.offset.toInt()) {
+          if (single_con.offset.toInt() == 110 ||
+              single_con.offset.toInt() == 111 ||
+              single_con.offset.toInt() == 109) {
+            single_con.animateTo(0.0,
+                duration: Duration(milliseconds: 880), curve: Curves.linear);
+            ini = 0;
+          }
+        } else {
+          ini = single_con.offset.toInt();
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    print("dddddddddddddddddddddddddddddddddddddddddd");
+    super.dispose();
   }
 
   @override
@@ -77,9 +112,19 @@ class _GelleryPageState extends State<GelleryPage> {
             // @next button
             IconButton(
                 onPressed: () {
-                  PagePush.Push(context, Image_effect_page(
-                    image_file: file_image!, isRound: false, nextbutton: () {
-                          PagePush.Push(context, Last_post_Page(file_image: file_image!));
+                  PagePush.Push(
+                      context,
+                      Image_effect_page(
+                        image_file: file_image!,
+                        isRound: false,
+                        nextbutton: (file) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => Last_post_Page(
+                                      file_image: file_image!))).then((value) {
+                            setState(() {});
+                          });
                         },
                       ));
                 },
@@ -99,29 +144,31 @@ class _GelleryPageState extends State<GelleryPage> {
                 child: Stack(
                   children: [
                     SingleChildScrollView(
+                      controller: single_con,
+                      physics: BouncingScrollPhysics(
+                          parent: ClampingScrollPhysics()),
                       child: Container(
-                        height: allsize.height,
+                        height: allsize.height - 105,
                         width: allsize.width,
                         child: Column(
                           children: [
                             // @single big  image panel
+
                             Container(
                                 height: allsize.height / 2,
                                 width: allsize.width,
                                 color: Colors.grey,
                                 padding: EdgeInsets.symmetric(vertical: 20.0),
                                 child: file_image == null
-                                    ? Image(
-                                        fit: BoxFit.cover,
-                                        image: FileImage(
-                                            File(all_Images_url[0].first)),
-                                        filterQuality: FilterQuality.high,
-                                      )
-                                    : Image(
-                                        fit: BoxFit.cover,
-                                        image: FileImage(file_image!),
-                                        filterQuality: FilterQuality.high,
-                                      )),
+                                    ? all_Images_url[0].endsWith(".mp4")
+                                        ? Video_wid(url: all_Images_url[0])
+                                        : BitmapImage.bitmap(
+                                            all_Images_url[0], 50)
+                                    : file_image!.last.path.endsWith(".mp4")
+                                        ? Video_wid(url: file_image!.last.path)
+                                        : BitmapImage.bitmap(
+                                            file_image!.last.path, 50)),
+
                             Container(
                               height: 50,
                               color: Colors.white,
@@ -179,55 +226,80 @@ class _GelleryPageState extends State<GelleryPage> {
                               ),
                             ),
                             Expanded(
-                                // @all image viewer
-                                child: GridView.count(
-                              crossAxisCount: 4,
-                              crossAxisSpacing: 2,
-                              mainAxisSpacing: 2,
-                              children: all_Images_url[0]
-                                  .map((e) => Gallery_Image_builder.build(
-                                      context,
-                                      e,
-                                      select_able,
-                                      (String file_url) {
-                                        if (file_url.isNotEmpty) {
+                                // @all image grid viewer
+                                child: Padding(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: GridView.count(
+                                physics: BouncingScrollPhysics(
+                                    parent: ClampingScrollPhysics()),
+                                crossAxisCount: 4,
+                                crossAxisSpacing: 2,
+                                mainAxisSpacing: 2,
+                                children: all_Images_url
+                                    .map((e) => Gallery_Image_builder.build(
+                                        context,
+                                        e,
+                                        select_able,
+                                        (String file_url) {
+                                          if (file_url.isNotEmpty) {
+                                            setState(() {
+                                              if (select_able) {
+                                                if (!path_contains(
+                                                    file_image!, file_url)) {
+                                                  file_image!
+                                                      .add(File(file_url));
+                                                }
+                                              } else {
+                                                file_image = [File(file_url)];
+                                              }
+                                            });
+                                            print(file_image);
+                                          }
+                                        },
+                                        select_image.isNotEmpty
+                                            // @select image selected or unselected list
+                                            ? select_image[
+                                                all_Images_url.indexOf(e)]
+                                            : false,
+                                        // @select counter list
+                                        select_count.isNotEmpty
+                                            ? select_count[
+                                                    all_Images_url.indexOf(e)]
+                                                .toString()
+                                            : 0.toString(),
+                                        // @func
+                                        () {
+                                          print("print 1111111111111");
+
                                           setState(() {
-                                            file_image = File(file_url);
+                                            select_able = true;
+                                            MyGalleryButton.iselect = true;
                                           });
-                                        }
-                                      },
-                                      select_image.isNotEmpty
-                                          // @select image selected or unselected list
-                                          ? select_image[
-                                              all_Images_url[0].indexOf(e)]
-                                          : false,
-                                      // @select counter list
-                                      select_count.isNotEmpty
-                                          ? select_count[
-                                                  all_Images_url[0].indexOf(e)]
-                                              .toString()
-                                          : 0.toString(),
-                                      // @func
-                                      () {
-                                        setState(() {
-                                          select_able = true;
-                                          MyGalleryButton.iselect = true;
-                                        });
-                                      },
-                                      // @func
-                                      () {
-                                        setState(() {
-                                          if (select_image[
-                                              all_Images_url[0].indexOf(e)]) {
-                                            select_image[all_Images_url[0]
-                                                .indexOf(e)] = false;
-                                          } else
-                                            select_image[all_Images_url[0]
-                                                .indexOf(e)] = true;
-                                          counter_select();
-                                        });
-                                      }))
-                                  .toList(),
+                                        },
+                                        // @func round button
+                                        (String url) {
+                                          print("print 2222222222");
+                                          setState(() {
+                                            if (select_able) {
+                                              if (!path_contains(
+                                                  file_image!, url)) {
+                                                file_image!.add(File(url));
+                                              }
+                                            } else {
+                                              file_image = [File(url)];
+                                            }
+                                            if (select_image[
+                                                all_Images_url.indexOf(e)]) {
+                                              select_image[all_Images_url
+                                                  .indexOf(e)] = false;
+                                            } else
+                                              select_image[all_Images_url
+                                                  .indexOf(e)] = true;
+                                            counter_select();
+                                          });
+                                        }))
+                                    .toList(),
+                              ),
                             ))
                           ],
                         ),
@@ -290,5 +362,131 @@ class _GelleryPageState extends State<GelleryPage> {
         }
       }
     }
+  }
+
+  bool path_contains(List<File> f, String s) {
+    for (var e in f) {
+      if (e.path == s) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+class Video_wid extends StatefulWidget {
+  final String url;
+  bool autoPlay;
+  Video_wid({Key? key, required this.url, this.autoPlay = true})
+      : super(key: key) {}
+
+  @override
+  _Video_widState createState() => _Video_widState();
+}
+
+class _Video_widState extends State<Video_wid> {
+  VideoViewController? main_con;
+  bool ispause = false;
+  String? last_url;
+  @override
+  void initState() {
+    last_url = widget.url;
+
+    super.initState();
+    setState(() {
+      last_url = widget.url;
+    });
+
+    print(last_url);
+  }
+
+  @override
+  void dispose() {
+    main_con!.dispose();
+    main_con = null;
+    print("dddddddddddddddddddddddddddddddddddddddddd");
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    print("diddiddidiidiididididiidiididididididididiidididiidididididididi");
+
+    super.didChangeDependencies();
+  }
+
+  @override
+  void deactivate() {
+    print("dededededededededededededededededededededede");
+
+    super.deactivate();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        color: Colors.white,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            NativeVideoView(
+                onCreated: (controller) {
+                  main_con = controller;
+                  main_con!.setVideoSource(
+                    widget.url,
+                    sourceType: VideoSourceType.network,
+                  );
+                  if (widget.autoPlay) {
+                    main_con!.play();
+                  }
+                },
+                onPrepared: (con, info) {},
+                onProgress: (i, k) {
+                  if (last_url != null && last_url != widget.url) {
+                    setState(() {
+                      last_url = widget.url;
+                    });
+                    main_con!.stop();
+                    main_con!.setVideoSource(
+                      widget.url,
+                      sourceType: VideoSourceType.network,
+                    );
+                    main_con!.play();
+                  }
+                },
+                onCompletion: (con) {
+                  main_con!.play();
+                }),
+            ispause
+                ? SizedBox(
+                    child:
+                        Icon(Icons.play_arrow, color: Colors.white, size: 50))
+                : SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                  ),
+            InkWell(
+              onTap: () {
+                setState(() => ispause = !ispause);
+                if (ispause) {
+                  main_con!.pause();
+                  print("111111111");
+                } else {
+                  print("22222");
+                  main_con!.play();
+                }
+              },
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

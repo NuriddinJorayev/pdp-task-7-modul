@@ -30,6 +30,9 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
   String bio_text = "";
   String image_url = '';
   bool isLoading = false;
+  static const IconData tik_icon =
+      IconData(0xe156, fontFamily: 'MaterialIcons');
+
   @override
   void initState() {
     initialize();
@@ -42,14 +45,17 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
     if (mounted) {
       setState(() {
         if (!user1.operator(user)) {
-          isLoading = true;      
-            name = user.name;
-            username = user.userName;
-            bio_text = user.bio;
-            image_url = user.user_image;
-            isLoading = false;
-         
+          print("user111111111111");
+          print(image_url);
+          isLoading = true;
+          name = user.name;
+          username = user.userName;
+          bio_text = user.bio;
+          image_url = user.user_image;
+          isLoading = false;
         } else {
+          print("user0000000000000");
+          print(image_url);
           isLoading = true;
           name = user1.name;
           username = user1.userName;
@@ -64,7 +70,7 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
   @override
   Widget build(BuildContext context) {
     var allsize = MediaQuery.of(context).size;
-    final double appbar_height = kToolbarHeight;
+    // final double appbar_height = kToolbarHeight;
     var status_height = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
       appBar: AppBar(
@@ -92,199 +98,209 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
               onPressed: () {
                 if (!isLoading) changedSave(context);
               },
-              icon: Icon(
-                IconData(0xe156, fontFamily: 'MaterialIcons'),
-                color: Colors.blue[700],
-              ))
+              icon: Icon(tik_icon, color: Colors.blue[700]))
         ],
         elevation: 0,
       ),
       body: Container(
-        height: allsize.height,
+        height: allsize.height + 10,
         width: allsize.width,
+        color: Colors.white,
         child: Stack(
           children: [
             SingleChildScrollView(
               child: Container(
-                height: allsize.height - (status_height + appbar_height),
+                height: allsize.height - (status_height),
                 width: allsize.width,
                 child: Column(
                   children: [
-                    SizedBox(height: 10),
                     GestureDetector(
                         onTap: () => _open_changePhotoPage(context),
                         child: _user_image(context, image_url)),
-                    SizedBox(height: 10),
                     GestureDetector(
                         onTap: () => _open_changePhotoPage(context),
                         child: Text("Change profile photo",
                             style: TextStyle(
                                 color: Colors.blue[700],
-                                fontSize: 22,
+                                fontSize: 20,
                                 height: 1.5))),
-                    SizedBox(height: allsize.height / 30),
-                    _textfield_view(context, "Name", name, () async {
-                      var pop_string = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => TextfieldPageOne(
-                                    name: name,
-                                    fierstWidget: SizedBox(
-                                      height: 20,
-                                    ),
-                                    lastWidget: Column(
-                                      children: [
-                                        SizedBox(height: 25),
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                              "Help people discover your account by using the name\nthat you're known bu: either your full name, nickname or\nbusiness name.",
-                                              style: TextStyle(
-                                                  color: Colors.black
-                                                      .withAlpha(180))),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                              "You can only change your name twice within 14 days.",
-                                              style: TextStyle(
-                                                color:
-                                                    Colors.black.withAlpha(180),
-                                              )),
-                                        ),
-                                      ],
-                                    ),
-                                  )));
-                      if (pop_string != null) {
-                        setState(() {
-                          name = pop_string;
-                        });
-                      }
-                    }),
-                    SizedBox(height: allsize.height / 30),
-                    _textfield_view(context, "Username", username, () async {
-                      var pop_string = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => TextfieldPageTwo(
-                                    textInputFormat:
-                                        FilteringTextInputFormatter.deny(
-                                            RegExp(r'[\s]'),
-                                            replacementString: "_"),
-                                    name: username,
-                                    lastWidget: Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: 20),
-                                          Text(
-                                              "You'llbe able to change your username back to\nlastUsername for another 14 days.",
-                                              style: TextStyle(
-                                                  color: Colors.black
-                                                      .withAlpha(180))),
-                                          SizedBox(height: 2),
-                                          Text("Learn more",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.blue,
-                                                  fontWeight: FontWeight.w500,
-                                                  letterSpacing: .8)),
-                                        ],
-                                      ),
-                                    ),
-                                  )));
-                      if (pop_string != null) {
-                        setState(() {
-                          username = pop_string;
-                        });
-                      }
-                    }),
-                    SizedBox(height: allsize.height / 30),
-                    _empty_textfield_view(context, "Pronouns"),
-                    SizedBox(height: allsize.height / 30),
-                    _empty_textfield_view(context, "Website"),
-                    SizedBox(height: allsize.height / 30),
-                    _textfield_view(context, "Bio", bio_text, () async {
-                      var pop_string = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => TextfieldPageTwo(
-                                    name: bio_text,
-                                    textInputFormat:
-                                        LengthLimitingTextInputFormatter(150),
-                                    isBio: true,
-                                    lastWidget: Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        // sdfghjk
-                                      ],
-                                    ),
-                                  )));
-                      if (pop_string != null) {
-                        setState(() {
-                          bio_text = pop_string;
-                        });
-                          _runData();
-                      }
-                    }),
                     Expanded(
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 20),
-                                Divider(
-                                  color: Colors.grey,
-                                  thickness: 1,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 15),
-                                  child: Text("Switch to Professional account",
-                                      style: TextStyle(
-                                          color: Colors.blue[700],
-                                          fontSize: 19,
-                                          height: 1.5)),
-                                ),
-                                Divider(
-                                  color: Colors.grey,
-                                  thickness: 1,
-                                ),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Divider(
-                                  color: Colors.grey,
-                                  thickness: 1,
-                                ),
-                                Container(
-                                  margin: EdgeInsets.all(5),
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: Text("Personal information settings",
-                                      style: TextStyle(
-                                          color: Colors.blue[700],
-                                          fontSize: 20,
-                                          height: 1.5)),
-                                ),
-                                Divider(
-                                  color: Colors.grey,
-                                  thickness: 1,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
+                        flex: 5,
+                        child: Container(
+                          child:
+                              _textfield_view(context, "Name", name, () async {
+                            var pop_string = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => TextfieldPageOne(
+                                          name: name,
+                                          fierstWidget: SizedBox(
+                                            height: 20,
+                                          ),
+                                          lastWidget: Column(
+                                            children: [
+                                              Container(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                    "Help people discover your account by using the name\nthat you're known bu: either your full name, nickname or\nbusiness name.",
+                                                    style: TextStyle(
+                                                        color: Colors.black
+                                                            .withAlpha(180))),
+                                              ),
+                                              Container(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                    "You can only change your name twice within 14 days.",
+                                                    style: TextStyle(
+                                                      color: Colors.black
+                                                          .withAlpha(180),
+                                                    )),
+                                              ),
+                                            ],
+                                          ),
+                                        )));
+                            if (pop_string != null) {
+                              setState(() {
+                                name = pop_string;
+                              });
+                            }
+                          }),
+                        )),
+                    SizedBox(height: 5),
+                    Expanded(
+                        flex: 5,
+                        child: Container(
+                          child: _textfield_view(context, "Username", username,
+                              () async {
+                            var pop_string = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => TextfieldPageTwo(
+                                          textInputFormat:
+                                              FilteringTextInputFormatter.deny(
+                                                  RegExp(r'[\ | \.]*'),
+                                                  replacementString: "_"),
+                                          name: username,
+                                          lastWidget: Container(
+                                            alignment: Alignment.centerLeft,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(height: 20),
+                                                Text(
+                                                    "You'llbe able to change your username back to\nlastUsername for another 14 days.",
+                                                    style: TextStyle(
+                                                        color: Colors.black
+                                                            .withAlpha(180))),
+                                                SizedBox(height: 2),
+                                                Text("Learn more",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.blue,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        letterSpacing: .8)),
+                                              ],
+                                            ),
+                                          ),
+                                        )));
+                            if (pop_string != null) {
+                              setState(() {
+                                username = pop_string;
+                              });
+                            }
+                          }),
+                        )),
+                    SizedBox(height: 10),
+                    Expanded(
+                        flex: 5,
+                        child: Container(
+                          child: _empty_textfield_view(context, "Pronouns"),
+                        )),
+                    Expanded(
+                        flex: 5,
+                        child: Container(
+                          child: _empty_textfield_view(context, "Website"),
+                        )),
+                    Expanded(
+                        flex: 4,
+                        child: Container(
+                          child: _textfield_view(context, "Bio", bio_text,
+                              () async {
+                            var pop_string = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => TextfieldPageTwo(
+                                          name: bio_text,
+                                          textInputFormat:
+                                              LengthLimitingTextInputFormatter(
+                                                  150),
+                                          isBio: true,
+                                          lastWidget: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              // sdfghjk
+                                            ],
+                                          ),
+                                        )));
+                            if (pop_string != null) {
+                              setState(() {
+                                bio_text = pop_string;
+                              });
+                              _runData();
+                            }
+                          }),
+                        )),
+                    Expanded(flex: 2, child: Container(color: Colors.white)),
+                    Expanded(
+                        flex: 4,
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              myDivider(context),
+                              Expanded(child: SizedBox.shrink()),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 15),
+                                child: Text("Switch to Professional account",
+                                    style: TextStyle(
+                                      color: Colors.blue[700],
+                                      fontSize: 19,
+                                    )),
+                              ),
+                              Expanded(child: SizedBox.shrink()),
+                              myDivider(context)
+                            ],
+                          ),
+                        )),
+                    Expanded(flex: 2, child: Container(color: Colors.white)),
+                    Expanded(
+                        flex: 5,
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              myDivider(context),
+                              Expanded(child: SizedBox.shrink()),
+                              Container(
+                                margin: EdgeInsets.all(5),
+                                padding: EdgeInsets.only(left: 10),
+                                child: Text("Personal information settings",
+                                    style: TextStyle(
+                                        color: Colors.blue[700],
+                                        fontSize: 20,
+                                        height: 1.5)),
+                              ),
+                              Expanded(child: SizedBox.shrink()),
+                              myDivider(context)
+                            ],
+                          ),
+                        )),
+                    Expanded(flex: 1, child: Container(color: Colors.white)),
                   ],
                 ),
               ),
@@ -307,6 +323,7 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
     var id = await Prefs.Load();
     MyUser user = MyUser(id, image_url, name, username, bio_text, [], 122, 83);
     DataService.SetNewData(user.Tojson());
+    Hive_db.set(id, user.Tojson());
     initialize();
   }
 
@@ -351,14 +368,15 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Expanded(child: SizedBox.shrink()),
               Text(text1,
                   style: TextStyle(
                       color: Colors.black.withAlpha(160),
                       fontWeight: FontWeight.w400,
-                      fontSize: 15)),
-              SizedBox(height: 5),
-              Text(text2, style: TextStyle(fontSize: 19)),
-              SizedBox(height: 8),
+                      fontSize: 14)),
+              SizedBox(height: 2),
+              Text(text2, style: TextStyle(fontSize: 18)),
+              Expanded(child: SizedBox.shrink()),
               myDivider(con)
             ],
           ),
@@ -370,6 +388,7 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
         width: MediaQuery.of(con).size.width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(text1,
                 style: TextStyle(
@@ -389,6 +408,7 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
               MaterialPageRoute(
                   builder: (_) => ChangeProfilePhoto(cameras: widget.cam)))
           .then((value) {
+        setState(() => isLoading = true);
         setState(() {
           image_url = value;
         });

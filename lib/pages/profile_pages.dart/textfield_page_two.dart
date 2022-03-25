@@ -28,6 +28,7 @@ class TextfieldPageTwo extends StatefulWidget {
 class _TextfieldPageTwoState extends State<TextfieldPageTwo> {
   var text_con = TextEditingController();
   int fix = 0;
+    static const IconData tik_icon = IconData(0xe156, fontFamily: 'MaterialIcons');
 
   Future<bool> popscope() async {
     Navigator.pop(context);
@@ -37,6 +38,8 @@ class _TextfieldPageTwoState extends State<TextfieldPageTwo> {
   @override
   void initState() {
     text_con.text = widget.name;
+    var v = (widget.isBio?? false);
+     fix =  v ? 15 : 1;
     super.initState();
   }
 
@@ -65,8 +68,7 @@ class _TextfieldPageTwoState extends State<TextfieldPageTwo> {
               onPressed: () {
                 Navigator.pop(context, text_con.text.trim());
               },
-              icon: Icon(
-                IconData(0xe156, fontFamily: 'MaterialIcons'),
+              icon: Icon(tik_icon,
                 color: Colors.blue[600],
                 size: 30,
               ))

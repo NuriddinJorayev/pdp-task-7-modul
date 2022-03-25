@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class MyRichText extends StatelessWidget {
   final String text;
-  const MyRichText({ Key? key, required this.text }) : super(key: key);
+  final String userName;
+  const MyRichText({ Key? key, required this.text, required this.userName }) : super(key: key);
 
   
 
@@ -15,7 +16,11 @@ class MyRichText extends StatelessWidget {
       children: list.map((e) {
         if(e.startsWith('@') || e.startsWith('#')){
           return withColor(e);
-        }else{
+        }
+        if(e.startsWith(userName)){
+          return addUserName(e);
+        }
+        else{
           return withoutColor(e);
         }
       }).toList()
@@ -31,6 +36,11 @@ class MyRichText extends StatelessWidget {
   TextSpan withoutColor(String t) => TextSpan(
     text: t + " ",
     style: TextStyle(color: Colors.black)
+    
+  );
+  TextSpan addUserName(String t) => TextSpan(
+    text: t + " ",
+    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, letterSpacing: .5)
     
   );
 }

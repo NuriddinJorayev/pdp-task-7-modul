@@ -21,17 +21,16 @@ class _MyUploadPageState extends State<MyUploadPage> {
   void initState() {
     super.initState();
     scroll_conterol = PageController(
-        initialPage: widget.selectText.compareTo('POST') == 0 ? 0 : 1, keepPage: true);
+        initialPage: widget.selectText.compareTo('POST') == 0 ? 0 : 1,
+        keepPage: true);
     initialize();
 
     setState(() {
       select_text = widget.selectText;
-      if(select_text.compareTo("STORY")==0){
-      _alignment = Alignment.bottomCenter;
-    }
+      if (select_text.compareTo("STORY") == 0) {
+        _alignment = Alignment.bottomCenter;
+      }
     });
-    
-
   }
 
   var cam;
@@ -62,7 +61,9 @@ class _MyUploadPageState extends State<MyUploadPage> {
                       alignment: _alignment,
                       select_text: select_text,
                       cameras: cam,
-                      ismainPage: widget.selectText.compareTo("STORY") == 0? true : false,
+                      ismainPage: widget.selectText.compareTo("STORY") == 0
+                          ? true
+                          : false,
                     )
                   : Center(child: CircularProgressIndicator()),
             ],
@@ -81,33 +82,40 @@ class _MyUploadPageState extends State<MyUploadPage> {
 
   // changer alignment when onpressed
   _check_fill(String _text) async {
-    setState(() {
-      select_text = _text;
-      switch (_text) {
-        case 'POST':
-          {
-            go_page(0);
-            _alignment = Alignment.bottomRight;
-            break;
-          }
-        case 'STORY':
-          {
-            go_page(1);
-            _alignment = Alignment.bottomCenter;
-            break;
-          }
-        case 'LIVE':
-          {
-            go_page(1);
-            _alignment = Alignment.bottomLeft;
-            break;
-          }
-      }
-    });
+    if (mounted)
+      setState(() {
+        select_text = _text;
+        switch (_text) {
+          case 'POST':
+            {
+              setState(() => _alignment = Alignment.bottomRight);
+              go_page(0);
+              break;
+            }
+          case 'STORY':
+            {
+              setState(() => _alignment = Alignment.bottomCenter);
+              go_page(1);
+
+              break;
+            }
+          case 'LIVE':
+            {
+              setState(() => _alignment = Alignment.bottomLeft);
+              go_page(1);
+
+              break;
+            }
+        }
+      });
   }
 
   go_page(int index) {
-    scroll_conterol!.animateToPage(index, 
-        duration: Duration(milliseconds: 200), curve: Curves.ease);
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      if (scroll_conterol!.hasClients) {
+        scroll_conterol!.animateToPage(index,
+            duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+      }
+    });
   }
 }

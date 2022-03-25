@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -12,8 +11,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 // ignore: must_be_immutable
 class MySearchPage extends StatefulWidget {
   MyUser? user;
-   MySearchPage({Key? key, this.user}) : super(key: key);
-   MySearchPage.from({Key? key, this.user}) : super(key: key);
+  MySearchPage({Key? key, this.user}) : super(key: key);
+  MySearchPage.from({Key? key, this.user}) : super(key: key);
 
   @override
   State<MySearchPage> createState() => _MySearchPageState();
@@ -64,7 +63,7 @@ class _MySearchPageState extends State<MySearchPage> {
   var control_textfield = TextEditingController();
   double last_offset = 0.0;
   var page_control = PageController();
-  var tempUser ;
+  var tempUser;
 
   Future<bool> system_back_function() async {
     MyPage_Controller.go_page(0);
@@ -75,24 +74,24 @@ class _MySearchPageState extends State<MySearchPage> {
     await Future.delayed(Duration(seconds: 2));
     scroll_controller.refreshCompleted();
   }
+
   Future<void> onBottem_loading() async {
     await Future.delayed(Duration(seconds: 2));
     scroll_controller.loadComplete();
   }
 
-  go_page(int i){   
-     WidgetsBinding.instance?.addPostFrameCallback((_) {
-                      if (page_control.hasClients){
-                        page_control.animateToPage(i,
-                            duration: Duration(milliseconds: 1),
-                            curve: Curves.linear);
-                      }
-                    });
+  go_page(int i) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      if (page_control.hasClients) {
+        page_control.animateToPage(i,
+            duration: Duration(milliseconds: 1), curve: Curves.linear);
+      }
+    });
   }
 
   @override
   void initState() {
-    super.initState();    
+    super.initState();
     control2.addListener(() {
       print(control2.position.pixels);
       setState(() {
@@ -109,7 +108,7 @@ class _MySearchPageState extends State<MySearchPage> {
   @override
   Widget build(BuildContext context) {
     var allSize = MediaQuery.of(context).size;
-    var height = MediaQuery.of(context).viewPadding.top;
+    // var height = MediaQuery.of(context).viewPadding.top;
 
     return WillPopScope(
       onWillPop: system_back_function,
@@ -117,23 +116,18 @@ class _MySearchPageState extends State<MySearchPage> {
         controller: page_control,
         physics: NeverScrollableScrollPhysics(),
         children: [
-          Scaffold(
-            body: SingleChildScrollView(
-              controller: control1,
-              child: Container(
-                height: allSize.height,
-                width: allSize.width,
-                child: Column(
-                  children: [
-                    Container(
-                      height: height + height,
-                      width: allSize.width,
-                      color: Colors.grey,
-                      alignment: Alignment.bottomCenter,
-                      // textfiel parent
-                      child: Container(
+          SafeArea(
+            child: Scaffold(
+              body: SingleChildScrollView(
+                controller: control1,
+                child: Container(
+                  height: allSize.height,
+                  width: allSize.width,
+                  child: Column(
+                    children: [
+                      Container(
                         padding: EdgeInsets.only(left: 15, right: 20),
-                        height: height,
+                        height: 50,
                         width: allSize.width,
                         color: Colors.white,
                         child: Container(
@@ -144,14 +138,12 @@ class _MySearchPageState extends State<MySearchPage> {
                           ),
                           // textfield
                           child: GestureDetector(
-                            onTap: (){
-                                go_page(1);
-                                setState(() {
-                                  
-                                });
-                              },
-                            child: TextField(                                                        
-                            enabled: false,
+                            onTap: () {
+                              go_page(1);
+                              setState(() {});
+                            },
+                            child: TextField(
+                              enabled: false,
                               controller: control_textfield,
                               style: TextStyle(
                                   fontSize: 18,
@@ -180,99 +172,93 @@ class _MySearchPageState extends State<MySearchPage> {
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: SmartRefresher(
-                        controller: scroll_controller,
-                        enablePullUp: true,
-                        
-                        header: ClassicHeader(
-                        
-                            idleText: '',
-                            releaseText: "",
-                            failedText: '',
-                            completeText: '',
-                            refreshingText: '',
-                            canTwoLevelText: '',
-                            refreshingIcon: CircularProgressIndicator(
-                              color: Colors.grey[400],
-                              strokeWidth: 2,
-                            )),
-
-                       
-                        footer: ClassicFooter(  
-                          idleText: "",
-                          failedText: "",
-                          noDataText: "",
-                          loadingText: "",
-                          canLoadingText: "",  
-                          idleIcon: Container(
-                            height: 50,
-                            width: 50,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.8
-                              ),
-                              shape: BoxShape.circle
-                            ),
-                            child: Icon(Feather.plus, size: 25, color: Colors.grey,),
-
-                          ),    
-                          onClick: (){
-                            scroll_controller.requestLoading();
-                          },             
-                          failedIcon: Container(
-                            height: 50,
-                            width: 50,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.8
-                              ),
-                              shape: BoxShape.circle
-                            ),
-                            child: Icon(Feather.plus, size: 25, color: Colors.grey,),
-
-                          ), 
-                          loadingIcon:  Container(
-                            height: 50,
-                            width: 50,
-                            child: CircularProgressIndicator(                        
+                      Expanded(
+                        child: SmartRefresher(
+                          controller: scroll_controller,
+                          enablePullUp: true,
+                          header: ClassicHeader(
+                              idleText: '',
+                              releaseText: "",
+                              failedText: '',
+                              completeText: '',
+                              refreshingText: '',
+                              canTwoLevelText: '',
+                              refreshingIcon: CircularProgressIndicator(
                                 color: Colors.grey[400],
                                 strokeWidth: 2,
-                              
+                              )),
+                          footer: ClassicFooter(
+                            idleText: "",
+                            failedText: "",
+                            noDataText: "",
+                            loadingText: "",
+                            canLoadingText: "",
+                            idleIcon: Container(
+                              height: 50,
+                              width: 50,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey, width: 1.8),
+                                  shape: BoxShape.circle),
+                              child: Icon(
+                                Feather.plus,
+                                size: 25,
+                                color: Colors.grey,
                               ),
+                            ),
+                            onClick: () {
+                              scroll_controller.requestLoading();
+                            },
+                            failedIcon: Container(
+                              height: 50,
+                              width: 50,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey, width: 1.8),
+                                  shape: BoxShape.circle),
+                              child: Icon(
+                                Feather.plus,
+                                size: 25,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            loadingIcon: Container(
+                              height: 50,
+                              width: 50,
+                              child: CircularProgressIndicator(
+                                color: Colors.grey[400],
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                          onLoading: onBottem_loading,
+                          onTwoLevel: (bool l) {},
+                          onRefresh: onRefresh,
+                          child: ListView(
+                            controller: control2,
+                            children: _all_items(allSize.height * .17,
+                                (allSize.width / 3) - 1, list),
                           ),
                         ),
-
-                         onLoading: onBottem_loading,  
-                         onTwoLevel: (bool l){
-                           
-                         },                
-                        onRefresh: onRefresh,
-                        
-                        child: ListView(
-                          controller: control2,
-                          children: _all_items(
-                              allSize.height * .17, (allSize.width / 3) - 1, list),
-                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-          SearchPageTwo(page_control: page_control,),
-          OtherUserview(pageController: page_control,)
+          SearchPageTwo(
+            page_control: page_control,
+          ),
+          OtherUserview(
+            pageController: page_control,
+          )
         ],
       ),
     );
   }
-
 
   List<Widget> _all_items(size1, size2, List l) {
     int counter = 0;
@@ -283,17 +269,17 @@ class _MySearchPageState extends State<MySearchPage> {
     List temp_list = [];
     for (int i = 0; i < l.length; i++) {
       temp_list.add(l[i]);
-      if (((i+1) - counter) == amount) {
+      if (((i + 1) - counter) == amount) {
         // three panel
         if (amount == 3) {
           isRight = !isRight;
-          counter = i+1;
+          counter = i + 1;
           amount = amount == 3 ? 6 : 3;
           get_list.add(_item_treeple(size1, size2, isRight, temp_list));
           temp_list = [];
           // wrap panel
         } else if (amount == 6) {
-          counter = i+1;
+          counter = i + 1;
           amount = amount == 3 ? 6 : 3;
           get_list.add(Wrap(
             children:
@@ -303,13 +289,11 @@ class _MySearchPageState extends State<MySearchPage> {
           temp_list = [];
         }
       }
-      if ((i) == l.length-1) {
-      
-            get_list.add(Wrap(children: temp_list.map((e) => _item_Of_list(size1, size2, e)).toList()));
+      if ((i) == l.length - 1) {
+        get_list.add(Wrap(
+            children:
+                temp_list.map((e) => _item_Of_list(size1, size2, e)).toList()));
         temp_list = [];
-       
-        
-      
       }
     }
     return get_list;
@@ -318,63 +302,68 @@ class _MySearchPageState extends State<MySearchPage> {
   Widget _item_Of_list(size1, size2, String url) => Container(
         margin: EdgeInsets.all(.5),
         height: size1,
-        width: size2,        
+        width: size2,
         child: Center(
-          child: CachedNetworkImage(
-              height: size1,
-        width: size2, 
-            fit: BoxFit.fill,
-            imageUrl: url,
-            errorWidget: (BuildCont, sgdhjkl, fghj)=>Container(color: Colors.grey[200],),
-            placeholder: (BuildCont, sgdhjkl)=>Container(),
-          )
-        ),
+            child: CachedNetworkImage(
+          height: size1,
+          width: size2,
+          fit: BoxFit.fill,
+          imageUrl: url,
+          errorWidget: (BuildCont, sgdhjkl, fghj) => Container(
+            color: Colors.grey[200],
+          ),
+          placeholder: (BuildCont, sgdhjkl) => Container(),
+        )),
       );
 
-
-  Widget _item_treeple(size1, size2, bool  isright,   url) => Row(
-        children: isright ? [
-          Column(
-            children: [
-              _item_Of_list(size1, size2, url[0]),
-              _item_Of_list(size1, size2, url[1]),
-            ],
-          ),
-          Container(
-            margin: EdgeInsets.all(.5),
-            height: (size1 + size1) + 1,
-            width: (size2 + size2) + 1,
-            child: CachedNetworkImage(              
-               fit: BoxFit.fill,
-              imageUrl: url[2],
-               errorWidget: (BuildCont, sgdhjkl, fghj)=>Container(color: Colors.grey[200],),
-            placeholder: (BuildCont, sgdhjkl)=>Container(),
-            height:  (size1 + size1) + 1,
-            width:   (size2 + size2) + 1,
-            ),
-          )
-        ]: [          
-          Container(
-            margin: EdgeInsets.all(.5),
-            height: (size1 + size1) + 1,
-            width: (size2 + size2) + 1,
-            child: CachedNetworkImage(              
-               fit: BoxFit.fill,
-              imageUrl: url[2],
-               errorWidget: (BuildCont, sgdhjkl, fghj)=>Container(color: Colors.grey[200],),
-            placeholder: (BuildCont, sgdhjkl)=>Container(),
-            height:  (size1 + size1) + 1,
-            width:   (size2 + size2) + 1,
-            ),
-          ),
-          Column(
-            children: [
-              _item_Of_list(size1, size2, url[0]),
-              _item_Of_list(size1, size2, url[1]),
-            ],
-          ),
-        ]
-      );
+  Widget _item_treeple(size1, size2, bool isright, url) => Row(
+      children: isright
+          ? [
+              Column(
+                children: [
+                  _item_Of_list(size1, size2, url[0]),
+                  _item_Of_list(size1, size2, url[1]),
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.all(.5),
+                height: (size1 + size1) + 1,
+                width: (size2 + size2) + 1,
+                child: CachedNetworkImage(
+                  fit: BoxFit.fill,
+                  imageUrl: url[2],
+                  errorWidget: (BuildCont, sgdhjkl, fghj) => Container(
+                    color: Colors.grey[200],
+                  ),
+                  placeholder: (BuildCont, sgdhjkl) => Container(),
+                  height: (size1 + size1) + 1,
+                  width: (size2 + size2) + 1,
+                ),
+              )
+            ]
+          : [
+              Container(
+                margin: EdgeInsets.all(.5),
+                height: (size1 + size1) + 1,
+                width: (size2 + size2) + 1,
+                child: CachedNetworkImage(
+                  fit: BoxFit.fill,
+                  imageUrl: url[2],
+                  errorWidget: (BuildCont, sgdhjkl, fghj) => Container(
+                    color: Colors.grey[200],
+                  ),
+                  placeholder: (BuildCont, sgdhjkl) => Container(),
+                  height: (size1 + size1) + 1,
+                  width: (size2 + size2) + 1,
+                ),
+              ),
+              Column(
+                children: [
+                  _item_Of_list(size1, size2, url[0]),
+                  _item_Of_list(size1, size2, url[1]),
+                ],
+              ),
+            ]);
 
   PreferredSizeWidget appbar(Size size) => PreferredSize(
         child: Container(
@@ -383,8 +372,4 @@ class _MySearchPageState extends State<MySearchPage> {
         ),
         preferredSize: size,
       );
-  
-
-
-
 }
