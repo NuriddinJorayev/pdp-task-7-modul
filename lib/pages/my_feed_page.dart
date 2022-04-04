@@ -1,10 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_myinsta/models/like_time.dart';
 import 'package:flutter_myinsta/models/myUser.dart';
 import 'package:flutter_myinsta/models/post.dart';
 import 'package:flutter_myinsta/pages/video_opener.dart';
@@ -46,10 +48,14 @@ class _MyFeedPageState extends State<MyFeedPage> {
     main_page_control.addListener(() {
       setState(() {});
     });
+
+    FirebaseFirestore.instance.collection("User").snapshots().listen((event) {
+      print("Listener is run -----------------------------------");
+    });
   }
 
   up_load() async {
-    var map = await await DataService.getData("all Users Posts");
+    var map = await DataService.getData("all Users Posts");
     setState(() {
       for (var e in map["allPosts"]) {
         print(Post.fromjson(e).user_name);
@@ -152,13 +158,15 @@ class _MyFeedPageState extends State<MyFeedPage> {
                               var id = await Prefs.Load();
                               bool isliked = false;
                               for (var item in p.likes) {
-                                if (item.id == id) {
+                                if (item.myuser.id == id) {
                                   isliked = true;
                                 }
                               }
                               setState(() {
                                 if (!isliked) {
-                                  p.likes.add(myuser);
+                                  LikeTime like_time = LikeTime(
+                                      GetNowTime(), p.post_images, myuser);
+                                  p.likes.add(like_time);
                                 }
                               });
                               print(p.userId);
@@ -191,19 +199,22 @@ class _MyFeedPageState extends State<MyFeedPage> {
                                     imageBoxfit: BoxFit.cover,
                                     iconSize: 100,
                                     onChanged: () async {
-                                      print("aaaaaaaa");
                                       var myuser = MyUser.FromJson(
                                           await DataService.getData());
                                       var id = await Prefs.Load();
                                       bool isliked = false;
                                       for (var item in p.likes) {
-                                        if (item.id == id) {
+                                        if (item.myuser.id == id) {
                                           isliked = true;
                                         }
                                       }
                                       setState(() {
                                         if (!isliked) {
-                                          p.likes.add(myuser);
+                                          LikeTime like_time = LikeTime(
+                                              GetNowTime(),
+                                              p.post_images,
+                                              myuser);
+                                          p.likes.add(like_time);
                                         }
                                       });
                                       print(p.userId);
@@ -229,19 +240,21 @@ class _MyFeedPageState extends State<MyFeedPage> {
                             var id = await Prefs.Load();
                             bool isliked = false;
                             for (var item in p.likes) {
-                              if (item.id == id) {
+                              if (item.myuser.id == id) {
                                 isliked = true;
                               }
                             }
 
                             setState(() {
                               if (!isliked) {
-                                p.likes.add(myuser);
+                                LikeTime like_time = LikeTime(
+                                    GetNowTime(), p.post_images, myuser);
+                                p.likes.add(like_time);
                               } else {
                                 int i = -1;
                                 for (var item in p.likes) {
                                   i++;
-                                  if (item.id == id) {
+                                  if (item.myuser.id == id) {
                                     p.likes.removeAt(i);
                                     break;
                                   }
@@ -347,9 +360,19 @@ class _MyFeedPageState extends State<MyFeedPage> {
     MyUserid = await Prefs.Load().then((value) => value);
   }
 
-  bool isLiked_Or_DisLiked(List<MyUser> user, id) {
+  String GetNowTime() {
+    String y = DateTime.now().year.toString();
+    String m = DateTime.now().month.toString();
+    String d = DateTime.now().day.toString();
+    String h = DateTime.now().hour.toString();
+    String min = DateTime.now().minute.toString();
+
+    return "$y-$m-$d $h:$min";
+  }
+
+  bool isLiked_Or_DisLiked(List<LikeTime> user, id) {
     for (var u in user) {
-      if (id == u.id) {
+      if (id == u.myuser.id) {
         return true;
       }
     }

@@ -8,8 +8,8 @@ class MyUser {
   String bio;
   List<Post> posts;
   // List<friend_user> posts;
-  int followers;
-  int following;
+  List<MyUser> followers;
+  List<MyUser> following;
 
   MyUser(this.id, this.user_image, this.name, this.userName, this.bio,
       this.posts, this.followers, this.following);
@@ -23,8 +23,14 @@ class MyUser {
         this.posts = json["posts"] != null
             ? List<Post>.from(json["posts"].map((e) => Post.fromjson(e)))
             : [],
-        this.followers = int.parse(json["followers"] ?? "0"),
-        this.following = int.parse(json["following"] ?? "0");
+        this.followers = json["followers"] != null
+            ? List<MyUser>.from(
+                json["followers"].map((e) => MyUser.FromJson(e)))
+            : [],
+        this.following = json["following"] != null
+            ? List<MyUser>.from(
+                json["following"].map((e) => MyUser.FromJson(e)))
+            : [];
 
   Map<String, dynamic> Tojson() => {
         "user_image": user_image,
@@ -33,8 +39,8 @@ class MyUser {
         "userName": userName,
         "bio": bio,
         "posts": posts.map((e) => e.ToJson()).toList(),
-        "followers": followers.toString(),
-        "following": following.toString()
+        "followers": followers.map((e) => e.Tojson()).toList(),
+        "following": following.map((e) => e.Tojson()).toList()
       };
 
   bool operator(MyUser user) => (this.user_image == user.user_image &&
@@ -43,6 +49,6 @@ class MyUser {
       this.userName == user.userName &&
       this.bio == user.bio &&
       this.posts.length == user.posts.length &&
-      this.followers == user.followers &&
-      this.following == user.following);
+      this.followers.length == user.followers.length &&
+      this.following.length == user.following.length);
 }

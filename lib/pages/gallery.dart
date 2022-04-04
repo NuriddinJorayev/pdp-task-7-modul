@@ -374,6 +374,7 @@ class _GelleryPageState extends State<GelleryPage> {
   }
 }
 
+// ignore: must_be_immutable
 class Video_wid extends StatefulWidget {
   final String url;
   bool autoPlay;

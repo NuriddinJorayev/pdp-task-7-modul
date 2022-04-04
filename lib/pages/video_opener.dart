@@ -1,4 +1,7 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:flutter/material.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:video_player/video_player.dart';
@@ -49,6 +52,7 @@ class _Feed_VideoState extends State<Feed_Video> {
   @override
   Widget build(BuildContext context) {
     var allsize = MediaQuery.of(context).size;
+    // ignore: unused_local_variable
     var appbar_size = AppBar().preferredSize.height;
     var statusbar = MediaQuery.of(context).viewPadding.top;
     return Scaffold(

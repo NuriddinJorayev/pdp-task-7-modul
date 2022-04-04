@@ -109,13 +109,16 @@ class _Image_effect_pageState extends State<Image_effect_page> {
         actions: [
           IconButton(
               onPressed: () {
-                if (!isLoading) {}
-                setState(() {
-                  isLoading = true;
-                });
+                if (!isLoading) {
+                  setState(() {
+                    isLoading = true;
+                  });
+                }
 
                 widget.nextbutton(File("/"));
-
+                setState(() {
+                  isLoading = false;
+                });
                 // widget.isRound ? Navigator.pop(context) : {};
               },
               icon: Icon(

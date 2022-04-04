@@ -45,6 +45,7 @@ dependencies:
   video_thumbnail: ^0.4.6
   animated_shimmer: ^1.0.0
   flutter_phosphor_icons: ^0.0.1+6
+  format: ^1.1.1
 
   
 

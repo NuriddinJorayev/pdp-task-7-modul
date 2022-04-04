@@ -4,8 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 class UserView {
-  static Widget User_post_follow_following(String img_url, String name,
-          String subtitle, String post, String follow, String following) =>
+  static Widget User_post_follow_following(
+          String img_url,
+          String name,
+          String subtitle,
+          String post,
+          String follow,
+          String following,
+          b(),
+          bb(),
+          bbb()) =>
       Container(
         padding: EdgeInsets.symmetric(horizontal: 15),
         child: Column(
@@ -40,14 +48,16 @@ class UserView {
                               : Icon(Feather.user)
                           : Icon(Feather.user)),
                 ),
-                Flexible(
-                  child: _text_builder(post, "Posts"),
+                Expanded(
+                  child: InkWell(onTap: b, child: _text_builder(post, "Posts")),
                 ),
-                Flexible(
-                  child: _text_builder(follow, "Followers"),
+                Expanded(
+                  child: InkWell(
+                      onTap: bb, child: _text_builder(follow, "Followers")),
                 ),
-                Flexible(
-                  child: _text_builder(following, "Following"),
+                Expanded(
+                  child: InkWell(
+                      onTap: bbb, child: _text_builder(following, "Following")),
                 ),
               ],
             ),
@@ -57,13 +67,13 @@ class UserView {
                 Text(
                   name,
                   style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
                       letterSpacing: .5),
                 ),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
                 ),
               ],
             )
@@ -71,20 +81,24 @@ class UserView {
         ),
       );
 
-  static Widget _text_builder(String text1, String text2) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            text1,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
-          ),
-          SizedBox(height: 5),
-          Text(
-            text2,
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400),
-          ),
-        ],
+  static Widget _text_builder(String text1, String text2) => Container(
+        height: 90,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text(
+              text1,
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 5),
+            Text(
+              text2,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+            ),
+          ],
+        ),
       );
 
   static Color contaoin_color = Colors.white;

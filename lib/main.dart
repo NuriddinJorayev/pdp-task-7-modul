@@ -9,7 +9,6 @@ import 'package:flutter_myinsta/pages/home_paga.dart';
 import 'package:flutter_myinsta/pages/my_profile_page.dart';
 import 'package:flutter_myinsta/pages/signin_page.dart';
 import 'package:flutter_myinsta/pages/signup_page.dart';
-import 'package:flutter_myinsta/pages/video_opener.dart';
 import 'package:flutter_myinsta/services/share_prefs.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';

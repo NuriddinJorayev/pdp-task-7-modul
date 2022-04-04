@@ -198,7 +198,12 @@ class _SignUpPageState extends State<SignUpPage> {
       await Prefs.Save(userid!.uid);
     } catch (e) {}
     var id = await Prefs.Load();
-    MyUser myUser = MyUser(id, "", f_control.text, "", "", [], 0, 0);
+    MyUser myUser = MyUser(
+        id,
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ5WTax6OUDHLtDrCgJeRZL1nOXXAcfs18TIB9Q-xVOheqUOfaw-g7aD7G_HefLxcLqog&usqp=CAU",
+        f_control.text,
+        "",
+        "", [], [], []);
     DataService.SetNewData(myUser.Tojson());
     Hive_db.set(id, myUser.Tojson());
   }

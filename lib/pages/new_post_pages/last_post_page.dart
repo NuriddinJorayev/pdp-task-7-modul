@@ -289,6 +289,6 @@ class _Last_post_PageState extends State<Last_post_Page> {
     var day = DateTime.now().day.toString();
     var month = DateTime.now().month.toString();
     var year = DateTime.now().year.toString();
-    return ("$year:$month:$day:$hour:$min");
+    return ("$year-$month-$day $hour:$min");
   }
 }

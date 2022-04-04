@@ -9,9 +9,9 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_myinsta/functions/page_control.dart';
 import 'package:flutter_myinsta/models/myUser.dart';
 import 'package:flutter_myinsta/models/post.dart';
+import 'package:flutter_myinsta/pages/my_follow_page.dart';
 import 'package:flutter_myinsta/pages/profile_pages.dart/edite_profile_page.dart';
 import 'package:flutter_myinsta/services/data_service.dart';
-import 'package:flutter_myinsta/services/hive_db.dart';
 import 'package:flutter_myinsta/services/share_prefs.dart';
 import 'package:flutter_myinsta/widgets/loading_widget.dart';
 import 'package:flutter_myinsta/widgets/profile_widgets/discover_people.dart';
@@ -35,8 +35,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
   String userName = "";
   String name = "";
   String bio = "";
-  int followers = 0;
-  int following = 0;
+  List<MyUser> followers = [];
+  List<MyUser> following = [];
   bool isLoading = false;
   List<Post> posts = [];
   List<bool> follow_button_isSelected = [
@@ -62,6 +62,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   initi_filds() async {
+    // ignore: unused_local_variable
     var id = await Prefs.Load();
     if (mounted) {
       try {
@@ -72,8 +73,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
           userName = user.userName.isNotEmpty ? user.userName : userName;
           name = user.name.isNotEmpty ? user.name : name;
           bio = user.bio.isNotEmpty ? user.bio : bio;
-          followers = user.followers != 0 ? user.followers : followers;
-          following = user.following != 0 ? user.following : following;
+          followers = user.followers.isNotEmpty ? user.followers : followers;
+          following = user.following.isNotEmpty ? user.following : following;
           posts = user.posts.isNotEmpty ? user.posts : posts;
         });
       } catch (e) {}
@@ -101,13 +102,22 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   _runData() async {
-    var id = await Prefs.Load();
+    // ignore: unused_local_variable
+    // var id = await Prefs.Load();
+    // var user_data = MyUser.FromJson((await DataService.getData()));
+
     setState(() => isLoading = true);
-    var user_data = MyUser.FromJson((await DataService.getData()));
-
     initi_filds();
-
     setState(() => isLoading = false);
+  }
+
+  @override
+  void didChangeDependencies() {
+    // setState(() => isLoading = true);
+    // initi_filds();
+    // setState(() => isLoading = false);
+    super.didChangeDependencies();
+    print("didChangeDependencies ===========================");
   }
 
   @override
@@ -181,8 +191,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             name,
                             bio,
                             posts.length.toString(),
-                            followers.toString(),
-                            followers.toString()),
+                            followers.length.toString(),
+                            following.length.toString(),
+                            () {}, () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (co) => My_Follow_page(
+                                      followers: followers,
+                                      following: following)));
+                        }, () {}),
                         SizedBox(height: 10),
                         // Edit profile button
                         UserView.Edit_profile(() async {

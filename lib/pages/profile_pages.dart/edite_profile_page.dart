@@ -29,6 +29,8 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
   String username = "";
   String bio_text = "";
   String image_url = '';
+  List<MyUser> followrs = [];
+  List<MyUser> following = [];
   bool isLoading = false;
   static const IconData tik_icon =
       IconData(0xe156, fontFamily: 'MaterialIcons');
@@ -52,6 +54,8 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
           username = user.userName;
           bio_text = user.bio;
           image_url = user.user_image;
+          followrs = user.followers;
+          following = user.following;
           isLoading = false;
         } else {
           print("user0000000000000");
@@ -61,6 +65,8 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
           username = user1.userName;
           bio_text = user1.bio;
           image_url = user1.user_image;
+          followrs = user1.followers;
+          following = user1.following;
           isLoading = false;
         }
       });
@@ -321,7 +327,8 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
 
   void _runData() async {
     var id = await Prefs.Load();
-    MyUser user = MyUser(id, image_url, name, username, bio_text, [], 122, 83);
+    MyUser user = MyUser(
+        id, image_url, name, username, bio_text, [], followrs, following);
     DataService.SetNewData(user.Tojson());
     Hive_db.set(id, user.Tojson());
     initialize();
