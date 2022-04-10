@@ -1,48 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_myinsta/pages/signin_page.dart';
-import 'package:flutter_myinsta/services/auth_service.dart';
-import 'package:flutter_myinsta/services/hive_db.dart';
-import 'package:flutter_myinsta/services/share_prefs.dart';
 
-class LogoutDialog {
-  static show(BuildContext context) {
+class PostRemoveDialog {
+  static show(BuildContext context, String s, tap()) async {
     showDialog(
         context: context,
         builder: (con) => Dialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
-              insetPadding: EdgeInsets.symmetric(horizontal: 80),
+              insetPadding: EdgeInsets.symmetric(horizontal: 70),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.white,
                 ),
-                height: 200,
+                height: 240,
                 alignment: Alignment.center,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    SizedBox(height: 30),
-                    _text_builder("Log out of"),
-                    SizedBox(height: 5),
-                    _text_builder("Instagram?"),
-                    SizedBox(height: 30),
+                    SizedBox(height: 25),
+                    _text_builder(
+                        "Delete ${s.contains(".mp4") ? "video" : "this post"}?"),
+                    SizedBox(height: 10),
+                    _text_builder2(
+                        "You can restore this post from Recently deleted in Your activity within 30 days. After that, it will be permanently deleted."),
+                    SizedBox(height: 25),
                     _myDivider(),
                     Expanded(
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
-                            onTap: () async {
-                              AuthService.AuthSignOut();
-                              Prefs.Delete();
-                              var id = await Prefs.Load();
-                              Hive_db.Delete(id);
+                            onTap: () {
+                              tap();
                               Navigator.pop(con);
-                              Navigator.of(context)
-                                  .pushReplacementNamed(SignInPage().id);
+                              Navigator.pop(con);
                             },
-                            child:
-                                _colorly_text_builder("Log out", Colors.blue)),
+                            child: _colorly_text_builder(
+                                "Delete", Color.fromARGB(255, 21, 90, 146))),
                       ),
                     ),
                     _myDivider(),
@@ -56,12 +50,14 @@ class LogoutDialog {
                           ),
                           onTap: () {
                             Navigator.pop(con);
+                            Navigator.pop(con);
                           },
                           child: Align(
                             alignment: Alignment.center,
-                            child: Text("Cancel",
+                            child: Text(
+                                "${s.contains(".mp4") ? "Cancel" : "Don't delete"}?",
                                 style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500)),
+                                    fontSize: 16, fontWeight: FontWeight.w500)),
                           ),
                         ),
                       ),
@@ -81,8 +77,17 @@ class LogoutDialog {
         alignment: Alignment.center,
         child: Text(
           s,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+        ),
+      );
+  static Widget _text_builder2(s) => Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        alignment: Alignment.center,
+        child: Text(
+          s,
+          textAlign: TextAlign.center,
           style: TextStyle(
-              fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: .9),
+              fontSize: 12, height: 1.4, fontWeight: FontWeight.normal),
         ),
       );
   static Widget _colorly_text_builder(s, [xcolor]) => Container(
@@ -91,7 +96,7 @@ class LogoutDialog {
           s,
           style: TextStyle(
               color: xcolor != null ? xcolor : Colors.black,
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.w900,
               letterSpacing: .9),
         ),

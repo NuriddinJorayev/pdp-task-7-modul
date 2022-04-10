@@ -65,6 +65,7 @@ class ProfileMenuSheet {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           alignment: Alignment.centerLeft,
+          color: Colors.white,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,

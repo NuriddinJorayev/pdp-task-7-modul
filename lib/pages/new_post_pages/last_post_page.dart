@@ -53,11 +53,14 @@ class _Last_post_PageState extends State<Last_post_Page> {
     return Scaffold(
       // start appbar
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        elevation: isLoading ? 0 : 1,
+        backgroundColor: isLoading ? Colors.grey : Colors.white,
         leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: isLoading
+                ? null
+                : () {
+                    Navigator.pop(context);
+                  },
             icon: Icon(
               AntDesign.arrowleft,
               color: Colors.black,
@@ -67,28 +70,38 @@ class _Last_post_PageState extends State<Last_post_Page> {
             style: TextStyle(color: Colors.black, fontSize: 22)),
         actions: [
           IconButton(
-              onPressed: () async {
-                FocusScope.of(context).requestFocus(FocusNode());
-                setState(() => isLoading = true);
-                var id = await Prefs.Load();
-                List<String> post_image_url = [];
-                print(widget.file_image);
-                for (var item in widget.file_image) {
-                  post_image_url.add((await FileService.SetImage(item,
-                      key: "all Posts images")));
-                  print("item = $item");
-                }
-                var myuser = MyUser.FromJson(await DataService.getData());
-                var user_ob = Post(myuser.user_image, myuser.userName, location,
-                    post_image_url, [], control.text, [], get_now_date(), id);
-                var setpost_to_user =
-                    MyUser.FromJson(await DataService.getData());
-                setpost_to_user.posts.add(user_ob);
-                DataService.SetNewData(setpost_to_user.Tojson());
-                DataService.SetNewData(user_ob.ToJson(), "all Users Posts");
-                setState(() => isLoading = false);
-                Navigator.pushReplacementNamed(context, Home().id);
-              },
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      setState(() => isLoading = true);
+                      var id = await Prefs.Load();
+                      List<String> post_image_url = [];
+                      for (var item in widget.file_image) {
+                        print("====================================== $item");
+                        print("rasm jo'natdim ");
+                        post_image_url.add((await FileService.SetImage(item,
+                            key: "all Posts images")));
+                      }
+                      var myuser = MyUser.FromJson(await DataService.getData());
+                      var user_ob = Post(
+                          myuser.user_image,
+                          myuser.userName,
+                          location,
+                          post_image_url,
+                          [],
+                          control.text,
+                          [],
+                          get_now_date(),
+                          id);
+                      var setpost_to_user =
+                          MyUser.FromJson(await DataService.getData());
+                      DataService.SetNewData(setpost_to_user.Tojson());
+                      DataService.SetNewData(
+                          user_ob.ToJson(), "all Users Posts");
+                      setState(() => isLoading = false);
+                      Navigator.pushReplacementNamed(context, Home().id);
+                    },
               icon: Icon(
                 Ionicons.md_checkmark,
                 color: Colors.blue,

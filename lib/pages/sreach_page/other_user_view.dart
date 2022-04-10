@@ -63,8 +63,6 @@ class _OtherUserviewState extends State<OtherUserview> {
     super.initState();
     setState(() {
       user = Temp_data.user;
-      temp_grid_list = user!.posts;
-      print("all post = ${temp_grid_list.length}");
     });
 
     s_control.addListener(() {
@@ -132,6 +130,12 @@ class _OtherUserviewState extends State<OtherUserview> {
 
   filldes() async {
     var id = await Prefs.Load();
+    DataService.get_posts(user!.id).then((value) {
+      setState(() {
+        temp_grid_list = value;
+      });
+    });
+
     var data =
         await FirebaseFirestore.instance.collection("User").doc(user!.id).get();
     var t_user = MyUser.FromJson(data.data());
@@ -221,7 +225,7 @@ class _OtherUserviewState extends State<OtherUserview> {
                           user!.user_image,
                           user!.name,
                           user!.bio,
-                          user!.posts.length.toString(),
+                          user!.posts.toString(),
                           user!.followers.length.toString(),
                           user!.following.length.toString(),
                           () {},

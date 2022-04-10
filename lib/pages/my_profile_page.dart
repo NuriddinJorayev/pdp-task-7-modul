@@ -10,6 +10,7 @@ import 'package:flutter_myinsta/functions/page_control.dart';
 import 'package:flutter_myinsta/models/myUser.dart';
 import 'package:flutter_myinsta/models/post.dart';
 import 'package:flutter_myinsta/pages/my_follow_page.dart';
+import 'package:flutter_myinsta/pages/my_posts_view_page.dart';
 import 'package:flutter_myinsta/pages/profile_pages.dart/edite_profile_page.dart';
 import 'package:flutter_myinsta/services/data_service.dart';
 import 'package:flutter_myinsta/services/share_prefs.dart';
@@ -35,10 +36,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
   String userName = "";
   String name = "";
   String bio = "";
+  String myuserId = "";
   List<MyUser> followers = [];
   List<MyUser> following = [];
   bool isLoading = false;
-  List<Post> posts = [];
   List<bool> follow_button_isSelected = [
     false,
     false,
@@ -52,21 +53,29 @@ class _MyProfilePageState extends State<MyProfilePage> {
   List tempImageList = [];
   int tabBar_select_index = 0;
   bool user_view = true;
+  List<Post> my_all_posts = [];
 
   @override
   void initState() {
+    id_field();
     _runData();
     super.initState();
     initialize();
     initi_filds();
   }
 
+  id_field() async {
+    myuserId = await Prefs.Load();
+  }
+
   initi_filds() async {
-    // ignore: unused_local_variable
-    var id = await Prefs.Load();
+    setState(() {
+      isLoading = true;
+    });
     if (mounted) {
       try {
         var user = MyUser.FromJson(await DataService.getData());
+        var get_all_posts = await DataService.get_posts(await Prefs.Load());
         setState(() {
           user_image =
               user.user_image.isNotEmpty ? user.user_image : user_image;
@@ -75,10 +84,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
           bio = user.bio.isNotEmpty ? user.bio : bio;
           followers = user.followers.isNotEmpty ? user.followers : followers;
           following = user.following.isNotEmpty ? user.following : following;
-          posts = user.posts.isNotEmpty ? user.posts : posts;
+          // ignore: unnecessary_null_comparison
+          my_all_posts = get_all_posts != null ? get_all_posts : [];
         });
       } catch (e) {}
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   var cam;
@@ -190,7 +203,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             user_image,
                             name,
                             bio,
-                            posts.length.toString(),
+                            my_all_posts.length.toString(),
                             followers.length.toString(),
                             following.length.toString(),
                             () {}, () {
@@ -327,9 +340,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           height: size.height / 2,
                           width: size.width,
                           child: TabBarView(children: [
-                            posts.isNotEmpty
-                                ? _grid_builder(posts)
-                                : Text('No data'),
+                            _grid_builder(size),
                             Text("data2"),
                             Text("data3"),
                           ]),
@@ -459,15 +470,47 @@ class _MyProfilePageState extends State<MyProfilePage> {
       );
 
   // ignore: unused_element
-  Widget _grid_builder(List<Post> l) {
-    print(l);
+  Widget _grid_builder(Size size) {
+    return FutureBuilder<List<Post>>(
+      future: DataService.get_posts(myuserId),
+      builder: (BuildContext context, snap) {
+        if (snap.connectionState == ConnectionState.done && snap.hasData) {
+          return snap.data!.isNotEmpty
+              ? GridView.count(
+                  crossAxisCount: 4,
+                  mainAxisSpacing: 1,
+                  crossAxisSpacing: 1,
+                  padding: EdgeInsets.only(top: 2),
+                  children: snap.data!
+                      .map((e) => GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => MypostsViewPage()))
+                                  .then((value) {
+                                setState(() {});
+                              });
+                            },
+                            child: _items_of_grid(e.post_images),
+                          ))
+                      .toList(),
+                )
+              : Center(child: Text("No Posts"));
+        } else if (snap.connectionState == ConnectionState.waiting) {
+          return Container(
+            height: 50,
+            width: 50,
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(
+              color: Colors.black,
+              strokeWidth: 2,
+            ),
+          );
+        }
 
-    return GridView.count(
-      crossAxisCount: 4,
-      mainAxisSpacing: 1,
-      crossAxisSpacing: 1,
-      padding: EdgeInsets.only(top: 2),
-      children: l.map((e) => _items_of_grid(e.post_images)).toList(),
+        return Center(child: Text("No Posts"));
+      },
     );
   }
 

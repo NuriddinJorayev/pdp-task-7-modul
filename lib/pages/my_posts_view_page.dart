@@ -1,184 +1,126 @@
-import 'dart:typed_data';
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_myinsta/models/like_time.dart';
 import 'package:flutter_myinsta/models/myUser.dart';
 import 'package:flutter_myinsta/models/post.dart';
-import 'package:flutter_myinsta/pages/video_opener.dart';
+import 'package:flutter_myinsta/pages/my_feed_page.dart';
 import 'package:flutter_myinsta/services/data_service.dart';
 import 'package:flutter_myinsta/services/share_prefs.dart';
-import 'package:flutter_myinsta/utils/device_info.dart';
 import 'package:flutter_myinsta/widgets/dialog/post_remove_dialog.dart';
 import 'package:flutter_myinsta/widgets/feed_user_panel.dart';
-import 'package:flutter_myinsta/widgets/loading_widget.dart';
 import 'package:flutter_myinsta/widgets/my_rich_text.dart';
 import 'package:flutter_myinsta/widgets/sheets/gallry_button_sheet.dart';
 import 'package:flutter_myinsta/widgets/sheets/other_user_more_sheet.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_like_button/insta_like_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:video_player/video_player.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
-class MyFeedPage extends StatefulWidget {
-  const MyFeedPage({Key? key}) : super(key: key);
+import '../widgets/loading_widget.dart';
+
+class MypostsViewPage extends StatefulWidget {
+  MypostsViewPage({Key? key}) : super(key: key);
 
   @override
-  State<MyFeedPage> createState() => _MyFeedPageState();
+  State<MypostsViewPage> createState() => _MypostsViewPageState();
 }
 
-class _MyFeedPageState extends State<MyFeedPage> {
-  Size? mediaquery_size;
+class _MypostsViewPageState extends State<MypostsViewPage> {
   var main_page_control = ScrollController();
-
-  String img1 =
-      "https://www.perma-horti.com/wp-content/uploads/2019/02/image-2.jpg";
-  String img2 = "https://ychef.files.bbci.co.uk/976x549/p0738j5f.jpg";
-
   bool isLoading = false;
-
-  List<Post> All_posts = [];
-  var MyUserid;
-
+  String MyUserid = '';
   @override
   void initState() {
-    up_load();
     getMyId();
     super.initState();
-    print(All_posts.length);
-    main_page_control.addListener(() {
-      setState(() {});
-    });
-
     FirebaseFirestore.instance
         .collection("all Users Posts")
         .snapshots()
         .listen((event) {
       print("Listener is run -----------------------------------");
-      up_load();
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
-  up_load() async {
-    var map = await DataService.getData("all Users Posts");
-    if (mounted) {
-      setState(() {
-        All_posts = [];
-      });
-
-      setState(() {
-        for (var e in map["allPosts"]) {
-          All_posts.add(Post.fromjson(e));
-        }
-        //  All_posts = List<Post>.from(map["allPosts"].map((e)=> Post.fromjson(e)));
-      });
-    }
+  Future<bool> willpopscope() async {
+    Navigator.pop(context);
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
     var allsize = MediaQuery.of(context).size;
-    mediaquery_size = MediaQuery.of(context).size;
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          leadingWidth: 0,
-          title: Row(
-            children: [
-              Text("Home", style: TextStyle(color: Colors.black, fontSize: 30)),
-              Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: Colors.black,
-              )
-            ],
+    return WillPopScope(
+      onWillPop: willpopscope,
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  AntDesign.arrowleft,
+                  color: Colors.black,
+                  size: 30,
+                )),
+            title: Text("Posts",
+                style: TextStyle(color: Colors.black, fontSize: 22)),
           ),
-          actions: [
-            GestureDetector(
-              onTap: () async {
-                // DataService.SetNewData();
+          body: Stack(
+            children: [
+              Container(
+                  height: allsize.height,
+                  width: allsize.width,
+                  child: FutureBuilder<List<Post>>(
+                    future: DataService.get_posts(MyUserid),
+                    builder: (con, snp) {
+                      if (snp.connectionState == ConnectionState.done &&
+                          snp.hasData) {
+                        return ListView.builder(
+                            controller: main_page_control,
+                            itemCount: snp.data!.length,
+                            itemBuilder: (BuildContext con, int index) {
+                              // ignore: unnecessary_null_comparison
+                              if (snp.data![index].post_images != null) {
+                                return post_items_builder(snp.data![index]);
+                              }
+                              return Center(
+                                child: Text("No posts"),
+                              );
+                            });
+                      } else if (snp.connectionState ==
+                          ConnectionState.waiting) {
+                        return Container(
+                            height: allsize.height,
+                            width: allsize.width,
+                            color: Colors.black.withOpacity(.3),
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator(
+                                color: Colors.black, strokeWidth: 2));
+                      }
 
-                // DataService.Updata("Nurik nima gaplar yana o'zingda");
-                // QuerySnapshot<Map<String, dynamic>> query = await DataService.getData();
-                // print(query.docs.first.data());
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SvgPicture.asset(
-                    "assets/images/SVGs/icons8-facebook-messenger(1).svg",
-                    height: 30,
-                    width: 30),
-              ),
-            ),
-          ],
-        ),
-        body: Stack(
-          children: [
-            Container(
-              height: allsize.height,
-              width: allsize.width,
-              child: ListView.builder(
-                  controller: main_page_control,
-                  itemCount: All_posts.length,
-                  itemBuilder: (BuildContext con, int index) {
-                    // ignore: unnecessary_null_comparison
-                    if (All_posts[index].post_images != null) {
-                      return post_items_builder(All_posts[index]);
-                    }
-                    return SizedBox.shrink();
-                  }),
-            ),
-            isLoading
-                ? Container(
-                    height: allsize.height,
-                    width: allsize.width,
-                    color: Colors.black.withOpacity(.3),
-                    alignment: Alignment.center,
-                    child: MyLoadingWidget(progres_text: "Removing..."))
-                : SizedBox.shrink()
-          ],
-        ));
+                      return Center(child: Text("No posts"));
+                    },
+                  )),
+              isLoading
+                  ? Container(
+                      height: allsize.height,
+                      width: allsize.width,
+                      color: Colors.black.withOpacity(.3),
+                      alignment: Alignment.center,
+                      child: MyLoadingWidget(progres_text: "Removing..."))
+                  : SizedBox.shrink()
+            ],
+          )),
+    );
   }
-
-  sheet_checker(Post p) async {
-    var id = await Prefs.Load();
-    if (p.userId == id) {
-      GalleryButtonSheet.Show(context, [
-        "Copy Link",
-        "Share to...",
-        "Delete",
-        "Edit"
-      ], [
-        () {},
-        () {},
-        () async {
-          setState(() => isLoading = true);
-          print("object111");
-          PostRemoveDialog.show(context, p.post_images[0], () async {
-            print("object222");
-            await DataService.Delete_my_post(p);
-            await Future.delayed(Duration(seconds: 2));
-            setState(() => isLoading = false);
-          });
-          setState(() => isLoading = false);
-
-          // await Future.delayed(Duration(seconds: 2));
-        },
-        () {}
-      ]);
-    } else {
-      OtherUserMoreSheet.Show(context, () => null);
-    }
-  }
-
-// post items builder function
 
   double image_size = 300.0;
   var page_con = PageController();
@@ -419,8 +361,49 @@ class _MyFeedPageState extends State<MyFeedPage> {
         ),
       );
 
+  sheet_checker(Post p) async {
+    var id = await Prefs.Load();
+    if (p.userId == id) {
+      GalleryButtonSheet.Show(context, [
+        "Copy Link",
+        "Share to...",
+        "Delete",
+        "Edit"
+      ], [
+        () {},
+        () {},
+        () async {
+          setState(() => isLoading = true);
+          print("object111");
+          await PostRemoveDialog.show(context, p.post_images[0], () async {
+            var del = await DataService.Delete_my_post(p);
+            if (del) {
+              List<Post> posts = await DataService.get_posts(id);
+              if (posts != null) {
+                print("list bosh bo'ldi ");
+                if (posts.isEmpty) {
+                  Navigator.pop(context);
+                }
+              }
+            }
+          });
+
+          setState(() => isLoading = false);
+
+          // await Future.delayed(Duration(seconds: 2));
+        },
+        () {}
+      ]);
+    } else {
+      OtherUserMoreSheet.Show(context, () => null);
+    }
+  }
+
   getMyId() async {
-    MyUserid = await Prefs.Load().then((value) => value);
+    var v = await Prefs.Load().then((value) => value);
+    setState(() {
+      MyUserid = v;
+    });
   }
 
   String GetNowTime() {
@@ -449,140 +432,5 @@ class _MyFeedPageState extends State<MyFeedPage> {
         height: 250,
         width: MediaQuery.of(context).size.width,
         child: Video_wid(url: url, p: p));
-  }
-}
-
-class Video_wid extends StatefulWidget {
-  final String url;
-  final Post p;
-  Video_wid({Key? key, required this.url, required this.p}) : super(key: key);
-
-  @override
-  _Video_widState createState() => _Video_widState();
-}
-
-class _Video_widState extends State<Video_wid> {
-  VideoPlayerController? main_con;
-  bool isBuffering = false;
-  bool isInitialized = false;
-  bool isNoice = false;
-
-  @override
-  void initState() {
-    super.initState();
-    main_con = VideoPlayerController.network(
-      widget.url,
-    )..initialize();
-    main_con!.play();
-
-    main_con?.setLooping(true);
-    main_con?.addListener(() {
-      setState(() {
-        isBuffering = main_con!.value.isBuffering;
-        isInitialized = main_con!.value.isInitialized;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    main_con!.dispose();
-    main_con = null;
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: Key("mykey"),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => Feed_Video(
-                      likes: widget.p.likes.length.toString(),
-                      comments: widget.p.comments,
-                      user_image: widget.p.user_image,
-                      appbar_title: "Reels",
-                      user_name: widget.p.user_name,
-                      video_url: widget.url,
-                      caption: widget.p.caption)));
-        },
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            !isBuffering && isInitialized
-                ? VideoPlayer(main_con!)
-                : FutureBuilder<Uint8List?>(
-                    future: VideoThumbnail.thumbnailData(video: widget.url),
-                    builder: (con, snp) {
-                      if (snp.hasData) {
-                        return Image.memory(snp.data!);
-                      }
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
-                  ),
-            Container(
-              alignment: Alignment.bottomRight,
-              padding: EdgeInsets.all(10),
-              child: GestureDetector(
-                onTap: Volume_con,
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [
-                        Colors.black.withOpacity(.5),
-                        Colors.black.withOpacity(.5),
-                      ]),
-                      shape: BoxShape.circle),
-                  child: Icon(
-                    isNoice ? Icons.volume_up : Icons.volume_off,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              alignment: Alignment.topRight,
-              padding: EdgeInsets.all(15),
-              child: Image.asset(
-                "assets/images/reels.png",
-                height: 26,
-                width: 26,
-                fit: BoxFit.fill,
-              ),
-            )
-          ],
-        ),
-      ),
-      onVisibilityChanged: (info) {
-        if (main_con != null) {
-          if (info.visibleFraction > .5) {
-            main_con!.play();
-          } else {
-            main_con!.pause();
-          }
-        }
-      },
-    );
-  }
-
-  Volume_con() {
-    setState(() {
-      isNoice = !isNoice;
-    });
-    main_con!.setVolume(isNoice ? 1 : 0);
-  }
-}
-
-extension checkURLtoVideo on String {
-  bool checkURL() {
-    return this.toLowerCase().contains(".mp4");
   }
 }

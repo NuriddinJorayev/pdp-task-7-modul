@@ -63,8 +63,7 @@ class _MyUploadPageState extends State<MyUploadPage> {
                       cameras: cam,
                       ismainPage: widget.selectText.compareTo("STORY") == 0
                           ? true
-                          : false,
-                    )
+                          : false)
                   : Center(child: CircularProgressIndicator()),
             ],
           ),

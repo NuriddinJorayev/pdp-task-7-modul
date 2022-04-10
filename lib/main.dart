@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,6 +22,7 @@ void main() async {
   runApp(MyApp());
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
   var con_empty = PageController();
   MyApp({Key? key}) : super(key: key);

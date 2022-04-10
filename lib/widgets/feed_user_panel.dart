@@ -5,11 +5,13 @@ class MyFeedUserPanel extends StatelessWidget {
   final String title;
   final String subtitle;
   final String user_image;
+  final Function() more_button_tap;
   const MyFeedUserPanel(
       {Key? key,
       required this.title,
       required this.subtitle,
-      required this.user_image})
+      required this.user_image,
+      required this.more_button_tap})
       : super(key: key);
 
   @override
@@ -52,7 +54,7 @@ class MyFeedUserPanel extends StatelessWidget {
             child: Material(
               borderRadius: BorderRadius.circular(25),
               child: InkWell(
-                onTap: () {},
+                onTap: more_button_tap,
                 borderRadius: BorderRadius.circular(25),
                 child: Icon(
                   Icons.more_vert,

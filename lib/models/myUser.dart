@@ -1,4 +1,4 @@
-import 'package:flutter_myinsta/models/post.dart';
+import 'package:flutter_myinsta/models/device_info_mathod.dart';
 
 class MyUser {
   String id;
@@ -6,23 +6,21 @@ class MyUser {
   String name;
   String userName;
   String bio;
-  List<Post> posts;
-  // List<friend_user> posts;
+  int posts;
   List<MyUser> followers;
   List<MyUser> following;
+  DeviceIM device_info;
 
   MyUser(this.id, this.user_image, this.name, this.userName, this.bio,
-      this.posts, this.followers, this.following);
+      this.posts, this.followers, this.following, this.device_info);
 
   MyUser.FromJson(dynamic json)
       : this.user_image = json["user_image"] ?? "",
         this.name = json["name"] ?? "",
         this.id = json["id"],
+        this.posts = int.parse(json["posts"]),
         this.userName = json["userName"] ?? "",
         this.bio = json["bio"] ?? "",
-        this.posts = json["posts"] != null
-            ? List<Post>.from(json["posts"].map((e) => Post.fromjson(e)))
-            : [],
         this.followers = json["followers"] != null
             ? List<MyUser>.from(
                 json["followers"].map((e) => MyUser.FromJson(e)))
@@ -30,17 +28,19 @@ class MyUser {
         this.following = json["following"] != null
             ? List<MyUser>.from(
                 json["following"].map((e) => MyUser.FromJson(e)))
-            : [];
+            : [],
+        this.device_info = DeviceIM.FromJson(json["device_info"]);
 
   Map<String, dynamic> Tojson() => {
         "user_image": user_image,
         "name": name,
         "id": id,
+        "posts": posts.toString(),
         "userName": userName,
         "bio": bio,
-        "posts": posts.map((e) => e.ToJson()).toList(),
         "followers": followers.map((e) => e.Tojson()).toList(),
-        "following": following.map((e) => e.Tojson()).toList()
+        "following": following.map((e) => e.Tojson()).toList(),
+        "device_info": device_info.ToJson()
       };
 
   bool operator(MyUser user) => (this.user_image == user.user_image &&
@@ -48,7 +48,6 @@ class MyUser {
       this.id == user.id &&
       this.userName == user.userName &&
       this.bio == user.bio &&
-      this.posts.length == user.posts.length &&
       this.followers.length == user.followers.length &&
       this.following.length == user.following.length);
 }

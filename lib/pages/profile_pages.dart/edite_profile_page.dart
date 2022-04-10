@@ -13,6 +13,7 @@ import 'package:flutter_myinsta/services/data_service.dart';
 import 'package:flutter_myinsta/services/file_service.dart';
 import 'package:flutter_myinsta/services/hive_db.dart';
 import 'package:flutter_myinsta/services/share_prefs.dart';
+import 'package:flutter_myinsta/utils/device_info.dart';
 import 'package:flutter_myinsta/widgets/loading_widget.dart';
 import 'package:flutter_myinsta/widgets/sheets/edit_profile_sheet.dart';
 
@@ -29,6 +30,7 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
   String username = "";
   String bio_text = "";
   String image_url = '';
+  int posts = 0;
   List<MyUser> followrs = [];
   List<MyUser> following = [];
   bool isLoading = false;
@@ -53,6 +55,7 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
           name = user.name;
           username = user.userName;
           bio_text = user.bio;
+          posts = user.posts;
           image_url = user.user_image;
           followrs = user.followers;
           following = user.following;
@@ -64,6 +67,7 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
           name = user1.name;
           username = user1.userName;
           bio_text = user1.bio;
+          posts = user1.posts;
           image_url = user1.user_image;
           followrs = user1.followers;
           following = user1.following;
@@ -327,8 +331,8 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
 
   void _runData() async {
     var id = await Prefs.Load();
-    MyUser user = MyUser(
-        id, image_url, name, username, bio_text, [], followrs, following);
+    MyUser user = MyUser(id, image_url, name, username, bio_text, posts,
+        followrs, following, await DeviceInfo.DeviceParams());
     DataService.SetNewData(user.Tojson());
     Hive_db.set(id, user.Tojson());
     initialize();

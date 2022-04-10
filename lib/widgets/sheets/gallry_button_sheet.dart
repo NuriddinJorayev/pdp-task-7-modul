@@ -3,20 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:pop_bottom_menu/pop_bottom_menu.dart';
 
 class GalleryButtonSheet {
+  static int sheet_item_length = 6;
 
-      static int sheet_item_length = 6;
-      static List<String> sheet_item_titles = [
-        "Gallery", "Photos", "Videos", "Other...", "Camera", "Download"
-      ];
-
-  static Show(BuildContext context){
+  static Show(BuildContext context, List<String> list, List<Function()> funcs) {
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) {
         return Column(
           children: [
-            Expanded(child: SizedBox.shrink()),
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  color: Colors.black.withOpacity(.0),
+                ),
+              ),
+            ),
             Container(
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.centerLeft,
@@ -28,7 +33,7 @@ class GalleryButtonSheet {
                 color: Colors.white,
               ),
               child: Column(
-                 crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -38,17 +43,20 @@ class GalleryButtonSheet {
                         width: 35,
                         margin: EdgeInsets.symmetric(vertical: 10.0),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(2),
-                          color: Colors.grey[700]
-                        ),
+                            borderRadius: BorderRadius.circular(2),
+                            color: Colors.grey[700]),
                       )
                     ],
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: sheet_item_titles.map((e) => items_builder(e)).toList(),
+                    children: list
+                        .map((e) => items_builder(e, funcs[list.indexOf(e)]))
+                        .toList(),
                   ),
-                  SizedBox(height: 15.0,)
+                  SizedBox(
+                    height: 15.0,
+                  )
                 ],
               ),
             ),
@@ -58,15 +66,17 @@ class GalleryButtonSheet {
     );
   }
 
-  static Widget items_builder(String title) => SizedBox(
-    height: 45.0,
-    child: ListTile(    
-      contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 0.0),
-      title: Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
-      onTap: (){},
-    ),
-  );
-  }
+  static Widget items_builder(String title, Function() tap) => SizedBox(
+        height: 45.0,
+        child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 0.0),
+          title: Text(title,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+          selectedColor: Colors.grey,
+          onTap: tap,
+        ),
+      );
+}
   
 // Padding(
 //     padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),

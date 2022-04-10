@@ -30,7 +30,8 @@ class DataService {
     firestore.collection(posts).doc(userid).update(data);
   }
 
-  static Updata_post2(Map<String, Object?> data, String Id) async {
+  static Updata_post2(dynamic data, String Id) async {
+    print("${Id} = $Id");
     firestore.collection("all Users Posts").doc(Id).update(data);
     print(Id);
   }
@@ -59,6 +60,7 @@ class DataService {
       var u = MyUser.FromJson(item.data());
       if (u.id == id) {
         u.following.add(user);
+        print(u.Tojson());
         await firestore.collection("User").doc(id).update(u.Tojson());
         await followers_add(user, u);
         break;
@@ -118,5 +120,38 @@ class DataService {
         break;
       }
     }
+  }
+
+  static Future<bool> Delete_my_post(Post p) async {
+    var id = await Prefs.Load();
+    final value = await firestore.collection("all Users Posts").get();
+    final v = await value.docs.toList();
+    for (var item in v) {
+      Post p1 = Post.fromjson(item.data());
+
+      if (p1.userId == id &&
+          p1.caption == p.caption &&
+          p1.post_images[0] == p.post_images[0]) {
+        firestore.collection("all Users Posts").doc(item.id).delete();
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  static Future<List<Post>> get_posts(String id) async {
+    List<Post> post_list = [];
+    var value = await firestore.collection("all Users Posts").get();
+    final v = await value.docs.toList();
+
+    for (var item in v) {
+      Post p1 = Post.fromjson(item.data());
+      if (p1.userId == id) {
+        post_list.add(p1);
+      }
+    }
+
+    return post_list;
   }
 }

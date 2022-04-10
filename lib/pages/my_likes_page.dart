@@ -1,11 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_myinsta/models/like_time.dart';
-import 'package:flutter_myinsta/models/myUser.dart';
 import 'package:flutter_myinsta/models/post.dart';
-import 'package:flutter_myinsta/services/data_service.dart';
 import 'package:flutter_myinsta/services/share_prefs.dart';
 import 'package:flutter_myinsta/utils/date_time_parse.dart';
 

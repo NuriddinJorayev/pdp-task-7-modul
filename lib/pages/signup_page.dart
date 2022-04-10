@@ -7,6 +7,7 @@ import 'package:flutter_myinsta/services/auth_service.dart';
 import 'package:flutter_myinsta/services/data_service.dart';
 import 'package:flutter_myinsta/services/hive_db.dart';
 import 'package:flutter_myinsta/services/share_prefs.dart';
+import 'package:flutter_myinsta/utils/device_info.dart';
 import 'package:flutter_myinsta/utils/flutter_toast.dart';
 import 'package:flutter_myinsta/widgets/outline_button.dart';
 import 'package:flutter_myinsta/widgets/sign_text.dart';
@@ -203,7 +204,11 @@ class _SignUpPageState extends State<SignUpPage> {
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ5WTax6OUDHLtDrCgJeRZL1nOXXAcfs18TIB9Q-xVOheqUOfaw-g7aD7G_HefLxcLqog&usqp=CAU",
         f_control.text,
         "",
-        "", [], [], []);
+        "",
+        0,
+        [],
+        [],
+        await DeviceInfo.DeviceParams());
     DataService.SetNewData(myUser.Tojson());
     Hive_db.set(id, myUser.Tojson());
   }

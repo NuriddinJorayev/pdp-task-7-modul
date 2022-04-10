@@ -18,6 +18,7 @@ import 'package:flutter_myinsta/pages/my_profile_page.dart';
 import 'package:flutter_myinsta/pages/my_search_page.dart';
 import 'package:flutter_myinsta/pages/my_upload_page.dart';
 import 'package:flutter_myinsta/pages/profile_pages.dart/setting_page.dart';
+import 'package:flutter_myinsta/utils/device_info.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 
 class Home extends StatefulWidget {

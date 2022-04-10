@@ -35,7 +35,22 @@ class _GelleryPageState extends State<GelleryPage> {
   List<File>? file_image;
   List<File>? temp_file_image;
   int ini = 0;
-  // ignore: unused_field
+  static List<String> sheet_item_titles = [
+    "Gallery",
+    "Photos",
+    "Videos",
+    "Other...",
+    "Camera",
+    "Download"
+  ];
+  static List<Function()> fonctions = [
+    () {},
+    () {},
+    () {},
+    () {},
+    () {},
+    () {},
+  ];
 
   @override
   void initState() {
@@ -180,7 +195,8 @@ class _GelleryPageState extends State<GelleryPage> {
                                   // @gallery panel
                                   GestureDetector(
                                     onTap: () {
-                                      GalleryButtonSheet.Show(context);
+                                      GalleryButtonSheet.Show(context,
+                                          sheet_item_titles, fonctions);
                                     },
                                     child: Row(
                                       children: [
@@ -198,6 +214,7 @@ class _GelleryPageState extends State<GelleryPage> {
                                       MyGalleryButton.build(
                                           "assets/images/SVGs/copy-outline.svg",
                                           0, () {
+                                        print(file_image);
                                         setState(() {
                                           if (MyGalleryButton.iselect &&
                                               select_able) {
@@ -241,18 +258,19 @@ class _GelleryPageState extends State<GelleryPage> {
                                         e,
                                         select_able,
                                         (String file_url) {
+                                          print("select icon press");
                                           if (file_url.isNotEmpty) {
                                             setState(() {
                                               if (select_able) {
-                                                if (!path_contains(
-                                                    file_image!, file_url)) {
-                                                  file_image!
-                                                      .add(File(file_url));
-                                                }
+                                                print(file_image);
+                                                print(file_url);
                                               } else {
                                                 file_image = [File(file_url)];
                                               }
                                             });
+
+                                            print(select_image);
+                                            print(select_count);
                                             print(file_image);
                                           }
                                         },
@@ -274,16 +292,37 @@ class _GelleryPageState extends State<GelleryPage> {
                                           setState(() {
                                             select_able = true;
                                             MyGalleryButton.iselect = true;
+                                            select_image[0] = true;
+                                            select_count[0] = 1;
                                           });
                                         },
                                         // @func round button
                                         (String url) {
-                                          print("print 2222222222");
                                           setState(() {
                                             if (select_able) {
                                               if (!path_contains(
                                                   file_image!, url)) {
                                                 file_image!.add(File(url));
+                                                print("======qo'shildi");
+                                              } else {
+                                                for (int i = 0;
+                                                    i < file_image!.length;
+                                                    i++) {
+                                                  if (file_image![i].path ==
+                                                          url &&
+                                                      file_image!.length > 1) {
+                                                    file_image!.removeAt(i);
+                                                    print(
+                                                        "===============o'chir");
+                                                    break;
+                                                  } else if (file_image!
+                                                          .length <=
+                                                      1) {
+                                                    MyGalleryButton.iselect =
+                                                        false;
+                                                    select_able = false;
+                                                  }
+                                                }
                                               }
                                             } else {
                                               file_image = [File(url)];

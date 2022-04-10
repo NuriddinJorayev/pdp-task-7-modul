@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
@@ -6,7 +5,8 @@ import 'package:flutter_myinsta/widgets/dialog/logout.dart';
 
 class SettingPage extends StatefulWidget {
   final PageController settting_control;
-  const SettingPage({Key? key, required this.settting_control}) : super(key: key);
+  const SettingPage({Key? key, required this.settting_control})
+      : super(key: key);
 
   @override
   _SettingPageState createState() => _SettingPageState();
@@ -16,20 +16,20 @@ class _SettingPageState extends State<SettingPage> {
   bool isWrited = false;
   var control_textfield = TextEditingController();
 
-  Future<bool> popscope()async{
+  Future<bool> popscope() async {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      if(widget.settting_control.hasClients){
-              widget.settting_control.animateToPage(0, duration: Duration(milliseconds: 1), curve: Curves.easeInOut);
+      if (widget.settting_control.hasClients) {
+        widget.settting_control.animateToPage(0,
+            duration: Duration(milliseconds: 1), curve: Curves.easeInOut);
       }
-});
- return false;
+    });
+    return false;
   }
-
 
   @override
   Widget build(BuildContext context) {
     var allSize = MediaQuery.of(context).size;
-    return WillPopScope(      
+    return WillPopScope(
       onWillPop: popscope,
       child: Scaffold(
         appBar: AppBar(
@@ -37,7 +37,8 @@ class _SettingPageState extends State<SettingPage> {
           elevation: 0.0,
           leading: IconButton(
               onPressed: () {
-                widget.settting_control.animateToPage(0, duration: Duration(milliseconds: 400), curve: Curves.ease);
+                widget.settting_control.animateToPage(0,
+                    duration: Duration(milliseconds: 400), curve: Curves.ease);
               },
               icon: Icon(AntDesign.arrowleft, color: Colors.black)),
           title: Text("Settings",
@@ -113,7 +114,8 @@ class _SettingPageState extends State<SettingPage> {
                 // items
                 SizedBox(height: 20),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -128,8 +130,8 @@ class _SettingPageState extends State<SettingPage> {
                       ),
                       SizedBox(width: 12),
                       Text("Follow and invite friends",
-                          style:
-                              TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
@@ -146,35 +148,51 @@ class _SettingPageState extends State<SettingPage> {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15),
                   alignment: Alignment.centerLeft,
-                  child: Image.asset('assets/images/MetaLogo.png', height: 14.5,
-                  width: 80,),
+                  child: Image.asset(
+                    'assets/images/MetaLogo.png',
+                    height: 14.5,
+                    width: 80,
+                  ),
                 ),
-          
+
                 // blue text
                 blueText("Account Centre"),
                 // many text
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15),
-                  child: Text("Control settings for connected experiences across Instagram, the Facebook app and Massenger, including story and post sharing and logging in.", style: TextStyle(fontSize: 15, color: Colors.black.withAlpha(180), letterSpacing: .8, height: 1.5),),
+                  child: Text(
+                    "Control settings for connected experiences across Instagram, the Facebook app and Massenger, including story and post sharing and logging in.",
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black.withAlpha(180),
+                        letterSpacing: .8,
+                        height: 1.5),
+                  ),
                 ),
                 SizedBox(height: 35),
                 Container(
                   width: allSize.width,
                   margin: EdgeInsets.symmetric(horizontal: 15),
-                  child: Text("Logins", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: .8),),
+                  child: Text(
+                    "Logins",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: .8),
+                  ),
                 ),
-    
+
                 SizedBox(height: 20),
-                      // blue text
-                      blueText("Add account"),
+                // blue text
+                blueText("Add account"),
                 SizedBox(height: 10),
-                      // blue text
-                      GestureDetector(
-                        onTap: (){
-                          LogoutDialog.show(context);                       
-                        },
-                        child: blueText("Log out")),
-                         SizedBox(height: 12)
+                // blue text
+                GestureDetector(
+                    onTap: () {
+                      LogoutDialog.show(context);
+                    },
+                    child: blueText("Log out")),
+                SizedBox(height: 12)
               ],
             ),
           ),
@@ -182,28 +200,39 @@ class _SettingPageState extends State<SettingPage> {
       ),
     );
   }
+
   // base items
   Widget base_item(icon, text) => Container(
-    padding: EdgeInsets.symmetric(vertical: 14.8, horizontal: 15),
-    child: Row(
+        padding: EdgeInsets.symmetric(vertical: 14.8, horizontal: 15),
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-           Icon(
-                icon,
-                size: 25,
-              ),
-              
+            Icon(
+              icon,
+              size: 25,
+            ),
             SizedBox(width: 10),
             Text(text,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
           ],
         ),
-  );
+      );
 
- Widget blueText(String text)=>Container(
-   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-   alignment: Alignment.centerLeft,
-   child: Text(text, style: TextStyle(fontSize: 20, color: Colors.blue[600], fontWeight: FontWeight.w600),),
- );
+  Widget blueText(String text) => Container(
+        color: Colors.white,
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          width: double.infinity,
+          color: Colors.white,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            text,
+            style: TextStyle(
+                fontSize: 20,
+                color: Colors.blue[600],
+                fontWeight: FontWeight.w600),
+          ),
+        ),
+      );
 }
