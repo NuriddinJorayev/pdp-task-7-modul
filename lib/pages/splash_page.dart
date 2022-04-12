@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_myinsta/pages/home_paga.dart';
 import 'package:flutter_myinsta/pages/signin_page.dart';
+import 'package:flutter_myinsta/services/share_prefs.dart';
 import 'package:flutter_myinsta/widgets/sign_text.dart';
 
 class SplashPage extends StatefulWidget {
@@ -12,13 +15,24 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
     super.initState();
+    _initiNotification();
 
-    Timer(Duration(seconds: 3), (){
-      Navigator.pushReplacementNamed(context, SignInPage().id);
+    Timer(Duration(seconds: 3), () {
+      Navigator.pushReplacementNamed(context, Home().id);
+    });
+  }
+
+  _initiNotification() {
+    messaging.requestPermission(sound: true, alert: true, badge: true);
+    messaging.getToken().then((token) {
+      assert(token != null);
+      print("my token = $token");
+      Prefs.SaveFCM(token!);
     });
   }
 
@@ -35,8 +49,8 @@ class _SplashPageState extends State<SplashPage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-              Color.fromARGB(255, 252, 175, 69),
-              Color.fromARGB(255, 245, 96, 63),
+              Color.fromARGB(255, 252, 175, 69), //#fcaf45
+              Color.fromARGB(255, 245, 96, 63), //#f5603f
             ])),
         alignment: Alignment.center,
         child: Column(
@@ -44,11 +58,15 @@ class _SplashPageState extends State<SplashPage> {
           children: [
             Expanded(
               child: Align(
-                child: Text("Instagram", style: TextStyle(fontSize: 45, color: Colors.white, fontFamily: 'Billbong_family')),
+                child: Text("Instagram",
+                    style: TextStyle(
+                        fontSize: 45,
+                        color: Colors.white,
+                        fontFamily: 'Billbong_family')),
               ),
             ),
             MySignText(firstText: '', lastText: "All rights reserved"),
-           SizedBox(height: 20.0)
+            SizedBox(height: 20.0)
           ],
         ),
       ),

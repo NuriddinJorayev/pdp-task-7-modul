@@ -218,6 +218,7 @@ class _GelleryPageState extends State<GelleryPage> {
                                         setState(() {
                                           if (MyGalleryButton.iselect &&
                                               select_able) {
+                                            file_image = [file_image!.last];
                                             MyGalleryButton.iselect = false;
                                             for (int i = 0;
                                                 i < select_image.length;
@@ -286,15 +287,21 @@ class _GelleryPageState extends State<GelleryPage> {
                                                 .toString()
                                             : 0.toString(),
                                         // @func
-                                        () {
-                                          print("print 1111111111111");
+                                        (String url) {
+                                          if (!select_able) {
+                                            print(
+                                                "long press 111111111111111111111111");
 
-                                          setState(() {
-                                            select_able = true;
-                                            MyGalleryButton.iselect = true;
-                                            select_image[0] = true;
-                                            select_count[0] = 1;
-                                          });
+                                            setState(() {
+                                              select_able = true;
+                                              MyGalleryButton.iselect = true;
+                                              int index =
+                                                  all_Images_url.indexOf(url);
+                                              select_image[index] = true;
+                                              select_count[index] = 1;
+                                              file_image = [File(url)];
+                                            });
+                                          }
                                         },
                                         // @func round button
                                         (String url) {

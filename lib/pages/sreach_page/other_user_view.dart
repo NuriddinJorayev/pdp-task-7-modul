@@ -8,16 +8,17 @@ import 'package:flutter_myinsta/models/myUser.dart';
 import 'package:flutter_myinsta/models/post.dart';
 import 'package:flutter_myinsta/services/data_service.dart';
 import 'package:flutter_myinsta/services/share_prefs.dart';
+import 'package:flutter_myinsta/utils/send-notification.dart';
 import 'package:flutter_myinsta/widgets/profile_widgets/users_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class OtherUserview extends StatefulWidget {
   final PageController pageController;
+  final bool inpage;
 
-  const OtherUserview({
-    Key? key,
-    required this.pageController,
-  }) : super(key: key);
+  const OtherUserview(
+      {Key? key, required this.pageController, required this.inpage})
+      : super(key: key);
 
   @override
   _OtherUserviewState createState() => _OtherUserviewState();
@@ -182,7 +183,10 @@ class _OtherUserviewState extends State<OtherUserview> {
             elevation: 0,
             leading: IconButton(
               onPressed: () {
-                go_page(1);
+                if (widget.inpage) {
+                  Navigator.pop(context);
+                } else
+                  go_page(1);
               },
               icon: Icon(AntDesign.arrowleft, color: Colors.black),
             ),
@@ -225,7 +229,7 @@ class _OtherUserviewState extends State<OtherUserview> {
                           user!.user_image,
                           user!.name,
                           user!.bio,
-                          user!.posts.toString(),
+                          temp_grid_list.length.toString(),
                           user!.followers.length.toString(),
                           user!.following.length.toString(),
                           () {},
@@ -421,7 +425,11 @@ class _OtherUserviewState extends State<OtherUserview> {
         child: GestureDetector(
           onTap: () async {
             setState(() => follow_load = true);
-
+            if (!isfollowed) {
+              var my_user = MyUser.FromJson(await DataService.getData());
+              Sendnotification.Send(my_user.userName + ' Follow you', '',
+                  [user!.device_info.device_token]);
+            }
             if (text == "Follow") {
               setState(() {
                 isfollowed = !isfollowed;

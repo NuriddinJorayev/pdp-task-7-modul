@@ -254,6 +254,7 @@ class _MySearchPageState extends State<MySearchPage> {
           ),
           OtherUserview(
             pageController: page_control,
+            inpage: false,
           )
         ],
       ),

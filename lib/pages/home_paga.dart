@@ -100,7 +100,7 @@ class _HomeState extends State<Home> {
                   },
                   controller: page_control,
                   children: [
-                    MyFeedPage(),
+                    MyFeedPage(page_con: page_control),
                     MySearchPage(),
                     SizedBox.shrink(),
                     MyLikesPage(),
@@ -134,7 +134,7 @@ class _HomeState extends State<Home> {
                       if (page_control.hasClients) {
                         page_control.animateToPage(_currentIndex,
                             duration: Duration(milliseconds: 1),
-                            curve: Curves.easeInOut);
+                            curve: Curves.linear);
                       }
                     });
                   },

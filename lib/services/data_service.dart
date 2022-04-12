@@ -24,6 +24,13 @@ class DataService {
     return alldata;
   }
 
+  static Future<Map<String, dynamic>> getAnyUser(String id) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    Map<String, dynamic> alldata =
+        (await firestore.collection("User").doc(id).get()).data() ?? {};
+    return alldata;
+  }
+
   // updata data
   static Updata(Map<String, Object?> data, [String posts = "User"]) async {
     var userid = await Prefs.Load();

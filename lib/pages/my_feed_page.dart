@@ -2,18 +2,19 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_myinsta/functions/page_control.dart';
+import 'package:flutter_myinsta/functions/temp_data%20.dart';
 import 'package:flutter_myinsta/models/like_time.dart';
 import 'package:flutter_myinsta/models/myUser.dart';
 import 'package:flutter_myinsta/models/post.dart';
+import 'package:flutter_myinsta/pages/sreach_page/other_user_view.dart';
 import 'package:flutter_myinsta/pages/video_opener.dart';
 import 'package:flutter_myinsta/services/data_service.dart';
 import 'package:flutter_myinsta/services/share_prefs.dart';
-import 'package:flutter_myinsta/utils/device_info.dart';
+import 'package:flutter_myinsta/utils/image_downlader.dart';
 import 'package:flutter_myinsta/widgets/dialog/post_remove_dialog.dart';
 import 'package:flutter_myinsta/widgets/feed_user_panel.dart';
 import 'package:flutter_myinsta/widgets/loading_widget.dart';
@@ -26,9 +27,11 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:share_extend/share_extend.dart';
 
 class MyFeedPage extends StatefulWidget {
-  const MyFeedPage({Key? key}) : super(key: key);
+  PageController page_con;
+  MyFeedPage({Key? key, required this.page_con}) : super(key: key);
 
   @override
   State<MyFeedPage> createState() => _MyFeedPageState();
@@ -38,11 +41,8 @@ class _MyFeedPageState extends State<MyFeedPage> {
   Size? mediaquery_size;
   var main_page_control = ScrollController();
 
-  String img1 =
-      "https://www.perma-horti.com/wp-content/uploads/2019/02/image-2.jpg";
-  String img2 = "https://ychef.files.bbci.co.uk/976x549/p0738j5f.jpg";
-
   bool isLoading = false;
+  bool isSharing = false;
 
   List<Post> All_posts = [];
   var MyUserid;
@@ -88,7 +88,9 @@ class _MyFeedPageState extends State<MyFeedPage> {
     mediaquery_size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: (isLoading || isSharing)
+              ? Colors.black.withOpacity(.4)
+              : Colors.white,
           elevation: 0.0,
           leadingWidth: 0,
           title: Row(
@@ -102,9 +104,7 @@ class _MyFeedPageState extends State<MyFeedPage> {
           ),
           actions: [
             GestureDetector(
-              onTap: () async {
-                // DataService.SetNewData();
-
+              onTap: () {
                 // DataService.Updata("Nurik nima gaplar yana o'zingda");
                 // QuerySnapshot<Map<String, dynamic>> query = await DataService.getData();
                 // print(query.docs.first.data());
@@ -142,6 +142,17 @@ class _MyFeedPageState extends State<MyFeedPage> {
                     color: Colors.black.withOpacity(.3),
                     alignment: Alignment.center,
                     child: MyLoadingWidget(progres_text: "Removing..."))
+                : SizedBox.shrink(),
+            isSharing
+                ? Container(
+                    height: allsize.height,
+                    width: allsize.width,
+                    color: Colors.black.withOpacity(.3),
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                      color: Colors.black,
+                      strokeWidth: 2.5,
+                    ))
                 : SizedBox.shrink()
           ],
         ));
@@ -189,14 +200,35 @@ class _MyFeedPageState extends State<MyFeedPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            MyFeedUserPanel(
-              title: p.user_name,
-              subtitle: p.location,
-              user_image: p.user_image,
-              more_button_tap: () {
-                // OtherUserMoreSheet.Show(context, () => null);
-                sheet_checker(p);
+            GestureDetector(
+              onTap: () async {
+                var my_id = await Prefs.Load();
+                if (my_id == p.userId) {
+                  widget.page_con.animateToPage(4,
+                      duration: Duration(microseconds: 100),
+                      curve: Curves.linear);
+                } else {
+                  var user =
+                      MyUser.FromJson(await DataService.getAnyUser(p.userId));
+                  Temp_data.user = user;
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => OtherUserview(
+                                pageController: PageController(),
+                                inpage: true,
+                              )));
+                }
               },
+              child: MyFeedUserPanel(
+                title: p.user_name,
+                subtitle: p.location,
+                user_image: p.user_image,
+                more_button_tap: () {
+                  // OtherUserMoreSheet.Show(context, () => null);
+                  sheet_checker(p);
+                },
+              ),
             ),
             // base image
             p.post_images.length == 1
@@ -346,9 +378,24 @@ class _MyFeedPageState extends State<MyFeedPage> {
                           fit: BoxFit.cover,
                         ),
                         SizedBox(width: 15.0),
-                        Transform.rotate(
-                          angle: 3.14 / 10,
-                          child: Icon(Feather.send),
+                        GestureDetector(
+                          //@ share button
+                          onTap: () async {
+                            setState(() => isSharing = true);
+                            final files = await Image_downloader()
+                                .Download(p.post_images);
+
+                            List<String> ll =
+                                List<String>.from(files.map((e) => e.path));
+
+                            setState(() => isSharing = false);
+                            ShareExtend.shareMultiple(ll, "image",
+                                subject: p.caption);
+                          },
+                          child: Transform.rotate(
+                            angle: 3.14 / 10,
+                            child: Icon(Feather.send),
+                          ),
                         ),
                       ],
                     ),

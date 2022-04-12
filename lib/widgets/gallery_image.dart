@@ -14,11 +14,13 @@ class Gallery_Image_builder {
           Function(String url) url_func,
           bool isticked,
           String n,
-          Function() press,
+          Function(String url) press,
           Function(String url) ontap,
           [h]) =>
       GestureDetector(
-          onLongPress: press,
+          onLongPress: () {
+            press(img_url);
+          },
           onTap: () {
             select_able ? ontap(img_url) : () {};
             url_func(img_url);

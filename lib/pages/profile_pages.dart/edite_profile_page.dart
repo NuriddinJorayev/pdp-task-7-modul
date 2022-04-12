@@ -49,7 +49,6 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
     if (mounted) {
       setState(() {
         if (!user1.operator(user)) {
-          print("user111111111111");
           print(image_url);
           isLoading = true;
           name = user.name;
@@ -61,7 +60,6 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
           following = user.following;
           isLoading = false;
         } else {
-          print("user0000000000000");
           print(image_url);
           isLoading = true;
           name = user1.name;
@@ -420,9 +418,12 @@ class _EditeProfilePageState extends State<EditeProfilePage> {
                   builder: (_) => ChangeProfilePhoto(cameras: widget.cam)))
           .then((value) {
         setState(() => isLoading = true);
-        setState(() {
-          image_url = value;
-        });
+        print("my images = ${value} ---------------------------------------");
+        if (value != null) {
+          setState(() {
+            image_url = value;
+          });
+        }
         Navigator.pop(con);
         _runData();
       });
