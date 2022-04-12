@@ -94,6 +94,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
     });
   }
 
+  my_follow_page_show(int index) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (co) => My_Follow_page(
+                  followers: followers,
+                  following: following,
+                  index: index,
+                )));
+  }
+
   var cam;
   initialize() async {
     cam = await availableCameras();
@@ -207,13 +218,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             followers.length.toString(),
                             following.length.toString(),
                             () {}, () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (co) => My_Follow_page(
-                                      followers: followers,
-                                      following: following)));
-                        }, () {}),
+                          my_follow_page_show(0);
+                        }, () {
+                          my_follow_page_show(1);
+                        }),
                         SizedBox(height: 10),
                         // Edit profile button
                         UserView.Edit_profile(() async {

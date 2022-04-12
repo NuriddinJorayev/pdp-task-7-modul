@@ -55,7 +55,6 @@ class DataService {
         }
       }
     });
-    // update_user_posts();
   }
 
   static Future<String> following_add(MyUser user) async {

@@ -8,8 +8,12 @@ import 'package:flutter_svg/svg.dart';
 class My_Follow_page extends StatefulWidget {
   final List<MyUser> followers;
   final List<MyUser> following;
+  final int index;
   const My_Follow_page(
-      {Key? key, required this.followers, required this.following})
+      {Key? key,
+      required this.followers,
+      required this.following,
+      required this.index})
       : super(key: key);
 
   @override
